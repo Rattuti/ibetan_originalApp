@@ -1,0 +1,15 @@
+current directory: /home/iishihara96296/ibetan/backend/vendor/bundle/ruby/3.1.0/gems/racc-1.8.1/ext/racc/cparse
+/home/iishihara96296/.rbenv/versions/3.1.2/bin/ruby -I /home/iishihara96296/.rbenv/versions/3.1.2/lib/ruby/3.1.0 -r ./siteconf20241220-6628-1why5i.rb extconf.rb
+creating Makefile
+
+current directory: /home/iishihara96296/ibetan/backend/vendor/bundle/ruby/3.1.0/gems/racc-1.8.1/ext/racc/cparse
+make DESTDIR\= clean
+
+current directory: /home/iishihara96296/ibetan/backend/vendor/bundle/ruby/3.1.0/gems/racc-1.8.1/ext/racc/cparse
+make DESTDIR\=
+compiling cparse.c
+linking shared-object racc/cparse.so
+
+current directory: /home/iishihara96296/ibetan/backend/vendor/bundle/ruby/3.1.0/gems/racc-1.8.1/ext/racc/cparse
+make DESTDIR\= install
+/usr/bin/install -c -m 0755 cparse.so ./.gem.20241220-6628-ld1ppg/racc

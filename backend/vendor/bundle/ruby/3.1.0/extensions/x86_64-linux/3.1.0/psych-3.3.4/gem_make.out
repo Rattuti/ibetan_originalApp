@@ -1,0 +1,21 @@
+current directory: /home/iishihara96296/ibetan/backend/vendor/bundle/ruby/3.1.0/gems/psych-3.3.4/ext/psych
+/home/iishihara96296/.rbenv/versions/3.1.2/bin/ruby -I /home/iishihara96296/.rbenv/versions/3.1.2/lib/ruby/3.1.0 -r ./siteconf20221102-17902-mozbk7.rb extconf.rb
+checking for yaml.h... yes
+checking for yaml_get_version() in -lyaml... yes
+creating Makefile
+
+current directory: /home/iishihara96296/ibetan/backend/vendor/bundle/ruby/3.1.0/gems/psych-3.3.4/ext/psych
+make DESTDIR\= clean
+
+current directory: /home/iishihara96296/ibetan/backend/vendor/bundle/ruby/3.1.0/gems/psych-3.3.4/ext/psych
+make DESTDIR\=
+compiling psych.c
+compiling psych_emitter.c
+compiling psych_parser.c
+compiling psych_to_ruby.c
+compiling psych_yaml_tree.c
+linking shared-object psych.so
+
+current directory: /home/iishihara96296/ibetan/backend/vendor/bundle/ruby/3.1.0/gems/psych-3.3.4/ext/psych
+make DESTDIR\= install
+/usr/bin/install -c -m 0755 psych.so ./.gem.20221102-17902-7a4c99
