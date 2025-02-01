@@ -34,6 +34,7 @@
           }"
           v-for="day in week"
           :key="day.date"
+          @click="openEventModal(day.date)"
         >
           <div class="calendar-day">
             {{ day.day }}
@@ -59,6 +60,17 @@
             >
               {{ article.name }}
             </div>
+            <div v-if="showModal" class="modal">
+              <div class="modal-content">
+                <h3>{{ eventForm.id ? "イベント編集" : "新規イベント" }}</h3>
+                <input v-model="eventForm.name" placeholder="イベント名">
+                <input type="date" v-model="eventForm.start">
+                <input type="date" v-model="eventForm.end">
+                <input type="color" v-model="eventForm.color">
+                <button @click="saveEvent">保存</button>
+                <button @click="showModal = false">キャンセル</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -74,6 +86,14 @@ export default {
   data() {
     return {
       currentDate: moment(),
+      showMododal: false,
+      eventForm: {
+        id: null,
+        name: "",
+        start: "",
+        end: "",
+        color: "#ffcc00",
+      },
       articles: [],
       events: [
         { id: 2, name: "イベント", start: "2025-01-02", end: "2025-01-03", color: "limegreen" },
@@ -101,6 +121,38 @@ export default {
     this.fetchArticles();// eventsを取得
   },
   methods: {
+    openEventModal(date, event = null) {
+    this.showModal = true;
+    
+    if (event) {
+      // 既存イベントの編集
+      this.eventForm = { ...event };
+    } else {
+      // 新規イベントの追加
+      this.eventForm = {
+        id: null,
+        name: "",
+        start: date.format("YYYY-MM-DD"),
+        end: date.format("YYYY-MM-DD"),
+        color: "#ffcc00"
+      };
+    }
+  },
+  
+  saveEvent() {
+    if (this.eventForm.id) {
+      // 既存イベントの更新
+      const index = this.events.findIndex(e => e.id === this.eventForm.id);
+      if (index !== -1) {
+        this.events[index] = { ...this.eventForm };
+      }
+    } else {
+      // 新規イベントの追加
+      const newId = this.events.length ? Math.max(...this.events.map(e => e.id)) + 1 : 1;
+      this.events.push({ ...this.eventForm, id: newId });
+    }
+      this.showModal = false;
+    },
   // APIからイベントを取得
     async fetchArticles() {
       try {
@@ -251,6 +303,24 @@ export default {
 </script>
 
 <style>
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+}
+
 .content {
   margin: 1em auto;
   width: auto;

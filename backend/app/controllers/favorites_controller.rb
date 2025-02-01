@@ -1,5 +1,5 @@
 class FavoritesController < ApplicationController
-    before_action :authenticate_user!, only: ['create']
+    #before_action :authenticate_user!, only: ['create']
 
     def create
         favorite = Favorite.new(message_id: params[:id], user_id: current_user.id)

@@ -1,5 +1,5 @@
 class BookmarksController < ApplicationController
-    before_action :authenticate_user!, only: ['create']
+    #before_action :authenticate_user!, only: ['create']
 
     def create
         bookmark = Bookmark.new(message_id: params[:id], user_id: current_user.id)

@@ -1,5 +1,5 @@
 class MessagesController < ApplicationController
-    before_action :authenticate_user!, only: ["index"]
+    #before_action :authenticate_user!, only: ["index"]
 
     def index
         messages = Message.all
