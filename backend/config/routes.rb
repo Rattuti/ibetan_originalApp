@@ -3,27 +3,25 @@ Rails.application.routes.draw do
     mount_devise_token_auth_for 'User', at: 'auth', controllers: {
       registrations: 'auth/registrations'
     }
+  end
 
-    resources :messages, only: ['index'] do
-      member do
-        resources :bookmarks, only: ['create']
-      end
-    end
+  mount ActionCable.server => '/cable'
 
-    resources :messages, only: ['index'] do
-      member do
-        resources :favorites, only: ['create']
-      end
-    end
+  namespace :api do
+    resources :scraping, only: [:index]
+    resources :events, only: [:index, :show, :create, :destroy]
+  end  
+
+    resources :events, only: [:index]
 
     resources :articles, only: ['index'] do
       member do
-        resources :bookmarks, only: ['create']
+        resources :favorites, only: ['create','destroy']
       end
     end
 
-    resources :favorites, only: ['destroy']
-    resources :bookmarks, only: ['destroy']
+    resources :messages, only: [:index] do
+      resources :likes, only: [:create, :destroy]
+    end
 
-  end
 end

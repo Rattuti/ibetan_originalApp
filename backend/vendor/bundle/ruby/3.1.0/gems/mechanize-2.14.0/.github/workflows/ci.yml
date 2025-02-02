@@ -1,0 +1,43 @@
+name: "ci"
+
+concurrency:
+  group: "${{github.workflow}}-${{github.ref}}"
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 8 * * 5" # At 08:00 on Friday # https://crontab.guru/#0_8_*_*_5
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize]
+    branches:
+      - main
+
+jobs:
+  rubocop:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: "3.3"
+        bundler-cache: true
+    - run: bundle exec rake rubocop
+
+  test:
+    needs: ["rubocop"]
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby-version: ["2.6", "2.7", "3.0", "3.1", "3.2", "3.3", "3.4", "head"]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{matrix.ruby-version}}
+        bundler-cache: true
+    - run: bundle exec rake test

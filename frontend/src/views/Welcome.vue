@@ -15,10 +15,10 @@
 </template>
 
 <script>
-import LoginForm from '../components/LoginForm.vue';
-import SignupForm from '../components/SignupForm.vue';
+import loginForm from '../components/loginForm.vue';
+import signupForm from '../components/signupForm.vue';
 export default {
-    components: { LoginForm, SignupForm },
+    components: { loginForm, signupForm },
     data(){
         return{
         shouldShowLoginForm: false
@@ -26,7 +26,7 @@ export default {
     },
     methods: {
         redirectToChatRoom () {
-            this.$router.push({ name: 'Chatroom' })
+            this.$router.push({ name: 'ChatRoom' })
         }
     }  
 }

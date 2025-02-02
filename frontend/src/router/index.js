@@ -1,63 +1,85 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Welcome from '../views/Welcome'
-import Chatroom from '../views/Chatroom'
-import useValidate from '../auth/validate'
+import ChatRoom from '../views/ChatRoom'
+import UserMyPage from '@/views/UserMyPage';
+import Profile from '@/views/Profile';
+import Policy from '@/views/Policy';
+//import useValidate from '../auth/validate'
 
-const { error, validate } = useValidate()
+//const { error, validate } = useValidate()
 
-const requireAuth = async (to, from, next) => {
-  const uid = window.localStorage.getItem('uid')
-  const client = window.localStorage.getItem('client')
-  const accessToken = window.localStorage.getItem('access-token')
+// const requireAuth = async (to, from, next) => {
+//   const { error, validate } = useValidate();  // ここで呼び出し
+//   const uid = window.localStorage.getItem('uid')
+//   const client = window.localStorage.getItem('client')
+//   const accessToken = window.localStorage.getItem('access-token')
 
-  if (!uid || !client || !accessToken) {
-    console.log("ログインしていません")
-    next({ name: 'Welcome' })
-    return
-  }
+//   if (!uid || !client || !accessToken) {
+//     console.log("ログインしていません")
+//     next({ name: 'Welcome' })
+//     return
+//   }
 
-  await validate()
+//   await validate()
 
-  if (error.value) {
-    console.log("認証に失敗しました")
-    next({ name: 'Welcome' })
-  } else {
-    next()
-  }
-}
+//   if (error.value) {
+//     console.log("認証に失敗しました")
+//     next({ name: 'Welcome' })
+//   } else {
+//     next()
+//   }
+// }
 
-const noRequireAuth = async (to, from, next) => {
-  const uid = window.localStorage.getItem('uid')
-  const client = window.localStorage.getItem('client')
-  const accessToken = window.localStorage.getItem('access-token')
+// const noRequireAuth = async (to, from, next) => {
+//   const uid = window.localStorage.getItem('uid')
+//   const client = window.localStorage.getItem('client')
+//   const accessToken = window.localStorage.getItem('access-token')
 
-  if (!uid && !client && !accessToken) {
-    next()
-    return
-  }
+//   if (!uid && !client && !accessToken) {
+//     next()
+//     return
+//   }
 
-  await validate()
+//   await validate()
 
-  if (!error.value) {
-    next({ name: 'Chatroom' })
-  } else {
-    next()
-  }
-}
+//   if (!error.value) {
+//     next({ name: 'Chatroom' })
+//   } else {
+//     next()
+//   }
+// }
 
 const routes = [
   {
     path: '/',
     name: 'Welcome',
     component: Welcome,
-    beforeEnter: noRequireAuth
+    //beforeEnter: noRequireAuth
   },
   {
-    path: '/chatroom',
-    name: 'Chatroom',
-    component: Chatroom,
-    beforeEnter: requireAuth
-  }
+    path: '/ChatRoom',
+    name: 'ChatRoom',
+    component: ChatRoom,
+    //beforeEnter: requireAuth
+  },
+  {
+    path: '/UserMyPage',
+    name: 'MyPage',
+    component: UserMyPage,
+    //beforeEnter: noRequireAuth
+  },
+  {
+    path: '/UserMpPage/Profile',
+    name: 'Profile',
+    component: Profile,
+    //beforeEnter: noRequireAuth
+  },
+  {
+    path: '/Policy',
+    name: 'Policy',
+    component: Policy,
+    //beforeEnter: noRequireAuth
+  },
 ]
 
 const router = createRouter({

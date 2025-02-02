@@ -33,6 +33,7 @@ gem 'devise_token_auth', '~> 1.2', '>= 1.2.1'
 gem 'rack-cors'
 
 gem 'nokogiri'
+gem 'mechanize'
 # gem 'httparty'
 # gem 'feedjira'
 # gem 'seed-fu'

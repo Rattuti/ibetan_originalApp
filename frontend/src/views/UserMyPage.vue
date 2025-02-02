@@ -43,8 +43,10 @@
           </div>
         </div>
       </div>
-      <button @click="saveChanges">変更を保存</button>
-      <button @click="goToProfile">プロフィール編集</button>
+      <div class="button-container">
+        <button @click="saveChanges">変更を保存</button>
+        <button @click="goToProfile">プロフィール編集</button>
+      </div>
     </div>
     <ArticleWindow />
     <contact />
@@ -61,7 +63,7 @@ import navFooterBar from '../components/navFooterBar';
 
 import{reactive, onMounted} from "vue";
 import axios from 'axios'
-import setItem from '../auth/setItem'
+//import setItem from '../auth/setItem'
 
 
 export default {
@@ -150,6 +152,12 @@ export default {
 </script>
 
 <style>
+.button-container {
+  display: flex;
+  gap: 20px; /* ボタン間の間隔 */
+  justify-content: center; /* ボタンを中央揃え */
+  margin-top: 20px; /* 上のコンテンツとの間隔 */
+}
 
 
 .profile-section {

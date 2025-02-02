@@ -1,9 +1,9 @@
 <template>
   <div class="content">
     <div class="button-area">
-      <button @click="prevMonth">前の月</button>
-      <button @click="goToToday">今日</button>
-      <button @click="nextMonth">次の月</button>
+      <button class="calendar-btn" @click="prevMonth">前の月</button>
+      <button class="calendar-btn" @click="goToToday">今日</button>
+      <button class="calendar-btn" @click="nextMonth">次の月</button>
       <span class="calendar-name">カレンダー{{ displayMonth }}</span>
     </div>
     <div class="calendar">
@@ -96,24 +96,24 @@ export default {
       },
       articles: [],
       events: [
-        { id: 2, name: "イベント", start: "2025-01-02", end: "2025-01-03", color: "limegreen" },
-        { id: 3, name: "会議", start: "2025-01-06", end: "2025-01-06", color: "deepskyblue" },
-        { id: 4, name: "有給", start: "2025-01-08", end: "2025-01-08", color: "dimgray" },
-        { id: 5, name: "海外旅行", start: "2025-01-08", end: "2025-01-11", color: "navy" },
-        { id: 6, name: "誕生日", start: "2025-01-16", end: "2025-01-16", color: "orange" },
-        { id: 7, name: "イベント", start: "2025-01-12", end: "2025-01-15", color: "limegreen" },
-        { id: 8, name: "出張", start: "2025-01-12", end: "2025-01-13", color: "teal" },
-        { id: 9, name: "客先訪問", start: "2025-01-14", end: "2025-01-14", color: "red" },
-        { id: 10, name: "パーティ", start: "2025-01-15", end: "2025-01-15", color: "royalblue" },
-        { id: 12, name: "ミーティング", start: "2025-01-18", end: "2025-01-19", color: "blue" },
-        { id: 13, name: "イベント", start: "2025-01-21", end: "2025-01-21", color: "limegreen" },
-        { id: 14, name: "有給", start: "2025-01-20", end: "2025-01-20", color: "dimgray" },
-        { id: 15, name: "イベント", start: "2025-01-25", end: "2025-01-28", color: "limegreen" },
-        { id: 16, name: "会議", start: "2025-01-21", end: "2025-01-21", color: "deepskyblue" },
-        { id: 17, name: "旅行", start: "2025-01-23", end: "2025-01-24", color: "navy" },
-        { id: 18, name: "ミーティング", start: "2025-01-28", end: "2025-01-28", color: "blue" },
-        { id: 19, name: "会議", start: "2025-01-12", end: "2025-01-12", color: "deepskyblue" },
-        { id: 20, name: "誕生日", start: "2025-01-30", end: "2025-01-30", color: "orange" }
+        { id: 2, name: "イベント", start: "2025-02-02", end: "2025-02-03", color: "limegreen" },
+        { id: 3, name: "会議", start: "2025-02-06", end: "2025-02-06", color: "deepskyblue" },
+        { id: 4, name: "有給", start: "2025-02-08", end: "2025-02-08", color: "dimgray" },
+        { id: 5, name: "海外旅行", start: "2025-02-08", end: "2025-02-11", color: "navy" },
+        { id: 6, name: "誕生日", start: "2025-02-16", end: "2025-02-16", color: "orange" },
+        { id: 7, name: "イベント", start: "2025-02-12", end: "2025-02-15", color: "limegreen" },
+        { id: 8, name: "出張", start: "2025-02-12", end: "2025-02-13", color: "teal" },
+        { id: 9, name: "客先訪問", start: "2025-02-14", end: "2025-02-14", color: "red" },
+        { id: 10, name: "パーティ", start: "2025-02-15", end: "2025-02-15", color: "royalblue" },
+        { id: 12, name: "ミーティング", start: "2025-02-18", end: "2025-02-19", color: "blue" },
+        { id: 13, name: "イベント", start: "2025-02-21", end: "2025-02-21", color: "limegreen" },
+        { id: 14, name: "有給", start: "2025-02-20", end: "2025-02-20", color: "dimgray" },
+        { id: 15, name: "イベント", start: "2025-02-25", end: "2025-02-28", color: "limegreen" },
+        { id: 16, name: "会議", start: "2025-02-21", end: "2025-02-21", color: "deepskyblue" },
+        { id: 17, name: "旅行", start: "2025-02-23", end: "2025-02-24", color: "navy" },
+        { id: 18, name: "ミーティング", start: "2025-02-28", end: "2025-02-28", color: "blue" },
+        { id: 19, name: "会議", start: "2025-02-12", end: "2025-02-12", color: "deepskyblue" },
+        { id: 20, name: "誕生日", start: "2025-02-30", end: "2025-02-30", color: "orange" }
       ],
     };
   },
@@ -303,6 +303,14 @@ export default {
 </script>
 
 <style>
+.calendar-btn {
+  padding: 4px 8px;  /* 小さめのパディング */
+  font-size: 12px;   /* 文字サイズを小さく */
+  width: auto;
+  min-width: unset;   /* 最小幅を指定 */
+  height: 30px;      /* 高さを小さく */
+}
+
 .modal {
   position: fixed;
   top: 0;
@@ -394,13 +402,19 @@ export default {
   padding: 5px;
 }
 .calendar-event {
-  padding: 2px 5px;
+  padding: 1px 3px; /* 余白を調整 */
   border-radius: 3px;
   color: white;
-  font-size: 0.75em;
+  font-size: 0.7em; /* 文字サイズを小さめに */
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  height: 15px; /* 高さを15pxに */
+  line-height: 15px; /* テキストを高さの中央に配置 */
+  min-width: 40px; /* 幅を狭める */
+  max-width: 80px; /* 最大幅を調整 */
 }
+
+
 </style>

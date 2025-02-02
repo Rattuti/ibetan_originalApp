@@ -1,10 +1,11 @@
 class Api::EventsController < ApplicationController
     def index
         @events = Event.all
-        render json: @events.map { |event| 
+        render json: @events.map {
+        |event| 
             {
                 id: event.id,
-                name: event.title, # Vue側は name で扱う
+                name: event.title,
                 start: event.start_date, 
                 end: event.end_date,
                 color: event.color

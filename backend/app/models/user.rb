@@ -8,9 +8,9 @@ class User < ActiveRecord::Base
   include DeviseTokenAuth::Concerns::User
 
   has_many :articles
-  has_many :bookmarks
   has_many :favorites
   has_many :messages
+  has_many :likes, dependent: :destroy
 
   validates :name, presence: true
   validates :name, length: { maximum: 30 }
