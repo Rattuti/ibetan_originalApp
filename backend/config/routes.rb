@@ -16,7 +16,7 @@ Rails.application.routes.draw do
 
     resources :articles, only: ['index'] do
       member do
-        resources :favorites, only: ['create','destroy']
+        resources :favorites, only: [:create, :update, :destroy]
       end
     end
 

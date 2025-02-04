@@ -12,7 +12,8 @@
                 <tr v-for="item in filteredArticles" :key="item.article_id">
                     <td class="color-cell">
                         <!-- 色の四角を表示 -->
-                        <div class="color-box" :style="{ backgroundColor: item.color }"></div>
+                        <div class="color-box" :style="{ backgroundColor: item.color }">
+                        </div>
                     </td>
                     <td>
                         <a :href="item.url">
@@ -23,12 +24,10 @@
                         <font-awesome-icon
                             icon="tag"
                             class="tag"
-                            :class="{ active: item.active }"
+                            :class="{ active: item.click === 1, inactive: item.click === 0  }"
                             @click="toggleFavorite(item)"
                         />
-                        <span class="favorite-count">
-                            {{ item.favorites || 0 }}
-                        </span>
+
                     </td>
                 </tr>
             </tbody>
@@ -73,10 +72,12 @@ export default {
     computed: {
         // pageTypeによって表示する記事を切り替える
         filteredArticles() {
-            if (this.pageType === 'favorites') {
-                return this.articles.filter(article => article.favorites > 0);
-            }
-            return this.articles;
+            console.log("元の articles:", this.articles);  // 取得した記事の一覧をログ出力
+            const filtered = this.pageType === 'favorites'
+                ? this.articles.filter(article => article.favorites > 0)
+                : this.articles;
+            console.log("フィルタ後の articles:", filtered);  // フィルタ後のデータを確認
+            return filtered;
         },
     },
     created() {
@@ -90,31 +91,62 @@ export default {
                 { channel: "FavoriteChannel", article_id: this.article_id },
                 {
                     received: (data) => {
-                        this.favorites = data.favorites;
-                        this.active = data.active;
+                        console.log("ActionCable 受信:", data);
+
+                        // Vueのプロパティは直接変更せず、新しい配列を作成する
+                        const updatedArticles = this.articles.map(article => {
+                            if (article.article_id === data.article_id) {
+                                return { ...article, click: data.active ? 1 : 0 };
+                            }
+                            return article;
+                        });
+
+                        this.$emit("update-articles", updatedArticles); // 親に通知
                     }
                 }
             );
         },
         async toggleFavorite(item) {
+            console.log("クリックされた記事:", item); // 🔍 item に article_id があるか確認
+            if (!item.article_id) {
+                console.error("❌ 記事IDが不明です:", item);
+                return;
+            }
+
             try {
                 const apiUrl = process.env.VUE_APP_API_URL || 'http://localhost:3000';
-                await axios.post(`${apiUrl}/favorites`, { article_id: item.article_id });
-                item.favorites = item.favorites === 1 ? 0 : 1;
-                this.subscription.send({ favorites: item.favorites });
+
+                const clickValue = item.click === 1 ? 0 : 1;
+
+                console.log("APIリクエストURL:", `${apiUrl}/articles/${item.article_id}/favorites`);
+                console.log("送信データ:", { article_id: item.article_id, click: clickValue });
+
+                const response = await axios.post(`${apiUrl}/articles/${item.article_id}/favorites`, {
+                    article_id: item.article_id,
+                    click: clickValue
+                });
+
+                console.log("APIレスポンス:", response.data);
+
+                if (response.data && response.data.favorite) {
+                    item.click = response.data.favorite.click;
+                } else {
+                    throw new Error("お気に入りの更新に失敗しました。");
+                }
             } catch (error) {
                 this.errorMessage = "お気に入りの更新に失敗しました。";
-                console.error("お気に入りの更新に失敗しました。", error);
+                console.error("APIリクエストエラー:", error);
             }
-        }
+        },
     },
     beforeUnmount() {
         if (this.cable) {
             this.cable.disconnect();
         }
     }
-};
+}
 </script>
+
 
 <style scoped>
 .article-window {
@@ -186,11 +218,11 @@ export default {
     text-overflow: ellipsis;
 }
 
-/* お気に入り列 */
-.favorites-cell {
-    width: auto; /* お気に入り列は文字幅に自動調整 */
-    white-space: nowrap; /* テキストが折り返さないようにする */
-    position: relative;
+/* タグ列（アイコン） */
+.favorite-cell {
+    text-align: center; /* アイコンを中央に配置 */
+    width: auto; /* 列幅を自動調整 */
+    white-space: nowrap; /* 横文字固定 */
 }
 
 /* アイコンのスタイル */
@@ -217,18 +249,25 @@ export default {
     color: #0056b3;
 }
 
-/* タグアイコンの色変更 */
+/* タグアイコンのスタイル */
 .tag {
     font-size: 20px;
     color: #666;
     cursor: pointer;
     transition: color 0.3s, transform 0.2s, opacity 0.3s;
     opacity: 0.5; /* デフォルトは半透明 */
+    display: inline-block; /* インラインブロックにする */
+    vertical-align: middle; /* 中央寄せ */
 }
 
 .tag.active {
   color: #ff5722; /* アクティブ時の色 */
   opacity: 1; /* アクティブ時は不透明 */
+}
+
+.tag.inactive {
+    color: #666; /* 非アクティブ時の色 */
+    opacity: 0.5; /* 非アクティブ時は半透明 */
 }
 
 .tag:hover {

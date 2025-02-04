@@ -13,7 +13,7 @@
             <span class="name">{{ message.name }}</span>
             <div
                 class="message"
-                @dblclick="handleLike(message)"
+                @click="handleLike(message)"
                 :aria-label="`メッセージ内容：${message.content}`"
             >
                 {{ message.content }}
@@ -92,8 +92,8 @@ export default {
         authHeaders() {
         return {
             uid: this.uid,
-            'access-token': localStorage.getItem('access-token'),
-            client: localStorage.getItem('client'),
+            'access-token': localStorage.getItem('access-token')||'',
+            client: localStorage.getItem('client')||'',
         };
         },
     },

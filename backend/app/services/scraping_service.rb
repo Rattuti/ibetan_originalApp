@@ -27,6 +27,7 @@ class ScrapingService
       event_details = scrape_event_details(agent, url)
       event_dates = convert_to_date_format(event_details[:開催日])
 
+      # 記事を作成し、保存
       article = Article.create!(
         title: title,
         url: url,
@@ -36,13 +37,16 @@ class ScrapingService
         childcare: event_details[:保育]
       )
 
+      # 保存された後にarticle_idを自身のidで更新
+      article.update!(article_id: article.id)
+
       articles << article
 
       if article.persisted? && event_dates.any?
         event_dates.each do |date|
           begin
             event = Event.create!(
-              article_id: article.id,
+              article_id: article.article_id,
               title: article.title,
               start_date: date,
               end_date: date,
@@ -56,7 +60,7 @@ class ScrapingService
       elsif article.persisted?
         default_date = Date.today.strftime("%Y-%m-%d")
         event = Event.create!(
-          article_id: article.id,
+          article_id: article.article_id,
           title: article.title,
           start_date: default_date,
           end_date: default_date,
@@ -101,6 +105,16 @@ class ScrapingService
   end
 
   def self.fetch_existing_articles
-    Article.all
+    Article.left_joins(:favorites).select(
+      'articles.*, COALESCE(favorites.click, 0) AS click'
+    ).map do |article|
+      {
+        id: article.id,
+        title: article.title,
+        url: article.url,
+        color: article.color,
+        click: article.click || 0 # click が nil の場合は 0 にする
+      }
+    end
   end
 end

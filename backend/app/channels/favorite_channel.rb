@@ -1,21 +1,50 @@
 class FavoriteChannel < ApplicationCable::Channel
   def subscribed
     # お気に入り機能の特定の「記事」または「タグ」に関連付けたストリームに接続
-    stream_from "favorite_#{params[:article_id]}"
+    stream_from "favorite_channel_#{params[:article_id]}"
   end
 
   def unsubscribed
-    # クライアントが切断したときの処理（オプション）
+    # Any cleanup needed when channel is unsubscribed
   end
 
   def receive(data)
-    # 受け取ったデータに基づいて何か処理をすることができる
-    # 例: お気に入りの更新状態をデータベースに保存
-    article = Article.find(params[:article_id])
-    # 必要に応じてデータを更新
-    article.update(favorites: data['favorites'])
+    favorite_data = data["favorite"]
+    article_id = favorite_data["id"]
+
+    # 記事が存在するか確認
+    article = Article.find_by(id: article_id)
+    return unless article
+
+    user = User.first
+    # user = User.find_by(id: user.id)
+    return unless user
+
+    favorite = Favorite.find_by(user_id: user.id, article_id: article.id)
     
-    # 更新された情報を他のクライアントにブロードキャスト
-    ActionCable.server.broadcast("favorite_#{params[:article_id]}", { favorites: data['favorites'], active: data['favorites'] == 1 })
+    if favorite
+      # すでにお気に入りが存在する場合はclickの値を反転
+      new_click_value = favorite.click == 1 ? 0 : 1
+      favorite.update(click: new_click_value)
+      active = new_click_value == 1
+    else
+      # 新しくお気に入りを作成
+      Favorite.create!(user_id: user.id, article_id: article.id, click: 1)
+      active = true
+    end
+
+    # クリックされたお気に入りの数をカウント (clickが1のものをカウント)
+    favorites_count = Favorite.where(article_id: article.id, click: 1).count
+
+    # ブロードキャストで更新情報を送信
+    ActionCable.server.broadcast(
+      "favorite_channel_#{params[:article_id]}",
+      { 
+        article_id: article.id,
+        user_id: user.id,
+        active: active,
+        favorites: favorites_count
+      }
+    )
   end
 end

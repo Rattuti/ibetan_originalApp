@@ -24,27 +24,26 @@ export default {
   },
   methods: {
     async fetchArticles() {
-      this.isLoading = true;
-      this.errorMessage = null;
-
       try {
         const response = await axios.get("http://localhost:3000/api/scraping");
         console.log("取得したデータ:", response.data);
 
         if (response.data && Array.isArray(response.data.articles)) {
-          this.articles = response.data.articles; // 直接articlesにセット
-        } else {
-          this.errorMessage = "記事データが正しく取得できませんでした。";
-        }
+        this.articles = response.data.articles.map(article => ({
+            ...article,
+            article_id: article.id // `id` を `article_id` として扱う
+        }));
+        console.log("セット後の articles:", this.articles); // 🔍 確認用ログ
+    } else {
+        this.errorMessage = "記事データが正しく取得できませんでした。";
+    }
       } catch (error) {
-        this.errorMessage = error.response
-          ? `サーバーエラー: ${error.response.status}`
-          : "ネットワークエラーが発生しました。";
-        console.error("API取得エラー:", error);
-      } finally {
-        this.isLoading = false;
+          this.errorMessage = error.response
+              ? `サーバーエラー: ${error.response.status}`
+              : "ネットワークエラーが発生しました。";
+          console.error("API取得エラー:", error);
       }
-    },
+    }
   },
   mounted() {
     this.fetchArticles();

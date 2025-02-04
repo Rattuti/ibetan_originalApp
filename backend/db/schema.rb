@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2025_02_02_080007) do
+ActiveRecord::Schema.define(version: 2025_02_03_030137) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -53,7 +53,7 @@ ActiveRecord::Schema.define(version: 2025_02_02_080007) do
   create_table "favorites", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "article_id", null: false
-    t.string "marker_type"
+    t.integer "click", default: 0, null: false
     t.index ["article_id"], name: "index_favorites_on_article_id"
     t.index ["user_id"], name: "index_favorites_on_user_id"
   end
