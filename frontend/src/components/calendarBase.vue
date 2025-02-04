@@ -26,14 +26,20 @@
           </div>
           <div class="calendar-events">
             <div v-for="event in day.dayEvents" :key="event.id" class="calendar-event"
-              :class="{ multiDay: isMultiDayEvent(event) }" :style="getEventStyle(event, day.date)"
-              @click="goToEventDetail(event.id)">
+              :class="{ multiDay: isMultiDayEvent(event) }" 
+              :style="getEventStyle(event, day.date)"
+              @click="() => {
+                console.log('クリックされたイベント:', event);
+                console.log('イベントのデータ構造:', JSON.stringify(event, null, 2));
+                goToEventDetail(event.article_id || event.id);
+              }">
               {{ event.name }}
             </div>
 
             <div v-for="article in articles" :key="article.article_id" class="calendar-event"
-              :class="{ multiDay: isMultiDayEvent(article) }" :style="getEventStyle(article, day.date)"
-              @click="goToEventDetail(article.id)">
+              :class="{ multiDay: isMultiDayEvent(article) }" 
+              :style="getEventStyle(article, day.date)"
+              @click="goToEventDetail(article.article_id)">
               {{ article.name }}
             </div>
           </div>
@@ -116,7 +122,9 @@ export default {
             if (day.date.isSame(eventMoment, "day")) {
               if (!day.dayEvents.some(event => event.id === article.article_id)) {
                 const newEvent = this.createEventObject(article, eventMoment);
+                console.log("Created event object:", newEvent); // ここで id を確認
                 day.dayEvents.push(newEvent);
+                console.log("Event added to dayEvents:", day.dayEvents);
                 console.log("Event added:", newEvent);
               }
             }
@@ -137,7 +145,11 @@ export default {
     },
 
     goToEventDetail(eventId) {
-      console.log("クリックされたイベント:", eventId);
+      console.log("クリックされたイベントID:", eventId);
+      if (!eventId) {
+        console.error("エラー: eventId が undefined です", eventId);
+        return;
+      }
       this.$router.push({ name: "eventDetail", params: { id: eventId } });
     },
 

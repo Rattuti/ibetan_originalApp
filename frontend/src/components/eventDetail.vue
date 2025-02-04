@@ -45,7 +45,10 @@ export default {
                 console.error("イベント詳細の取得に失敗しました：", error);
             }
         }
-    }
+    },
+    mounted() {
+        console.log("現在のイベントID:", this.$route.params.id);
+    },
 };
 </script>
 

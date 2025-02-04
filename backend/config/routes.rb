@@ -12,8 +12,6 @@ Rails.application.routes.draw do
     resources :events, only: [:index, :show, :create, :destroy]
   end  
 
-    resources :events, only: [:index, :create, :update]
-
     resources :articles, only: ['index'] do
       member do
         resources :favorites, only: [:create, :update, :destroy]
