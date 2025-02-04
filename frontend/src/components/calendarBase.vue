@@ -8,68 +8,33 @@
     </div>
     <div class="calendar">
       <div class="calendar-weekly">
-        <div
-          class="calendar-youbi"
-          v-for="n in 7"
-          :key="n"
-          :class="{
-            sunday: n === 1,
-            saturday: n === 7
-          }"
-        >
+        <div class="calendar-youbi" v-for="n in 7" :key="n" :class="{
+          sunday: n === 1,
+          saturday: n === 7
+        }">
           {{ youbi(n - 1) }}
         </div>
       </div>
-      <div
-        class="calendar-weekly"
-        v-for="(week, weekIndex) in calendars"
-        :key="weekIndex"
-      >
-        <div
-          class="calendar-daily"
-          :class="{ 
-            outside: currentDate.format('YYYY-MM') !== day.month,
-            sunday: day.date.day() === 0,
-            saturday: day.date.day() === 6
-          }"
-          v-for="day in week"
-          :key="day.date"
-          @click="openEventModal(day.date)"
-        >
+      <div class="calendar-weekly" v-for="(week, weekIndex) in calendars" :key="weekIndex">
+        <div class="calendar-daily" :class="{
+          outside: currentDate.format('YYYY-MM') !== day.month,
+          sunday: day.date.day() === 0,
+          saturday: day.date.day() === 6
+        }" v-for="day in week" :key="day.date" @click="openEventModal(day.date)">
           <div class="calendar-day">
             {{ day.day }}
           </div>
           <div class="calendar-events">
-            <div
-              v-for="event in day.dayEvents"
-              :key="event.id"
-              class="calendar-event"
-              :class="{ multiDay: isMultiDayEvent(event) }"
-              :style="getEventStyle(event, day.date)"
-              @click="goToEventDetail(event.id)"
-            >
+            <div v-for="event in day.dayEvents" :key="event.id" class="calendar-event"
+              :class="{ multiDay: isMultiDayEvent(event) }" :style="getEventStyle(event, day.date)"
+              @click="goToEventDetail(event.id)">
               {{ event.name }}
             </div>
-            <div
-              v-for="article in articles"
-              :key="article.article_id"
-              class="calendar-event"
-              :class="{ multiDay: isMultiDayEvent(article) }"
-              :style="getEventStyle(article, day.date)"
-              @click="goToEventDetail(article.id)"
-            >
+
+            <div v-for="article in articles" :key="article.article_id" class="calendar-event"
+              :class="{ multiDay: isMultiDayEvent(article) }" :style="getEventStyle(article, day.date)"
+              @click="goToEventDetail(article.id)">
               {{ article.name }}
-            </div>
-            <div v-if="showModal" class="modal">
-              <div class="modal-content">
-                <h3>{{ eventForm.id ? "イベント編集" : "新規イベント" }}</h3>
-                <input v-model="eventForm.name" placeholder="イベント名">
-                <input type="date" v-model="eventForm.start">
-                <input type="date" v-model="eventForm.end">
-                <input type="color" v-model="eventForm.color">
-                <button @click="saveEvent">保存</button>
-                <button @click="showModal = false">キャンセル</button>
-              </div>
             </div>
           </div>
         </div>
@@ -79,6 +44,8 @@
 </template>
 
 <script>
+
+
 import moment from "moment";
 import axios from "axios";
 
@@ -86,14 +53,6 @@ export default {
   data() {
     return {
       currentDate: moment(),
-      showMododal: false,
-      eventForm: {
-        id: null,
-        name: "",
-        start: "",
-        end: "",
-        color: "#ffcc00",
-      },
       articles: [],
       events: [
         { id: 2, name: "イベント", start: "2025-02-02", end: "2025-02-03", color: "limegreen" },
@@ -121,49 +80,14 @@ export default {
     this.fetchArticles();// eventsを取得
   },
   methods: {
-    openEventModal(date, event = null) {
-    this.showModal = true;
-    
-    if (event) {
-      // 既存イベントの編集
-      this.eventForm = { ...event };
-    } else {
-      // 新規イベントの追加
-      this.eventForm = {
-        id: null,
-        name: "",
-        start: date.format("YYYY-MM-DD"),
-        end: date.format("YYYY-MM-DD"),
-        color: "#ffcc00"
-      };
-    }
-  },
-  
-  saveEvent() {
-    if (this.eventForm.id) {
-      // 既存イベントの更新
-      const index = this.events.findIndex(e => e.id === this.eventForm.id);
-      if (index !== -1) {
-        this.events[index] = { ...this.eventForm };
-      }
-    } else {
-      // 新規イベントの追加
-      const newId = this.events.length ? Math.max(...this.events.map(e => e.id)) + 1 : 1;
-      this.events.push({ ...this.eventForm, id: newId });
-    }
-      this.showModal = false;
-    },
-  // APIからイベントを取得
     async fetchArticles() {
       try {
-        const response = await axios.get(`http://localhost:3000/api/events`); 
+        const response = await axios.get(`http://localhost:3000/api/events`);
         this.articles = response.data; // APIから取得したデータをそのままセット
       } catch (error) {
         console.error("イベントの取得に失敗しました：", error);
-        this.$notify({ type: "error", message: "イベントの取得に失敗しました。" });
       }
     },
-
     // 記事をカレンダーに追加
     updateCalendarWithArticles() {
       this.articles.forEach(this.addArticleToCalendar);
@@ -213,12 +137,16 @@ export default {
     },
 
     goToEventDetail(eventId) {
-    console.log("クリックされたイベント:", eventId); // 確認
-    if (!eventId) {
-      console.error("イベントデータが無効です:", eventId);
-      return;
-    }
-    this.$router.push({ name: "eventDetail", params: { id: eventId.toString()  } });
+      console.log("クリックされたイベント:", eventId);
+      this.$router.push({ name: "eventDetail", params: { id: eventId } });
+    },
+
+    openEventModal(dayId) {
+      console.log("新規イベントの作成日:", dayId.format("YYYY-MM-DD"));
+      this.$router.push({
+        name: "eventCreate", // 必ずルート名を使用
+        query: { dayId: dayId.format("YYYY-MM-DD") } // 正しい日付を渡す
+      });
     },
 
     // 月移動
@@ -304,67 +232,73 @@ export default {
 
 <style>
 .calendar-btn {
-  padding: 4px 8px;  /* 小さめのパディング */
-  font-size: 12px;   /* 文字サイズを小さく */
+  padding: 4px 8px;
+  /* 小さめのパディング */
+  font-size: 12px;
+  /* 文字サイズを小さく */
   width: auto;
-  min-width: unset;   /* 最小幅を指定 */
-  height: 30px;      /* 高さを小さく */
-}
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 5px;
+  min-width: unset;
+  /* 最小幅を指定 */
+  height: 30px;
+  /* 高さを小さく */
 }
 
 .content {
   margin: 1em auto;
   width: auto;
-  display: flex; /* ボタンとカレンダーを横並びに */
-  flex-direction: column; /* ボタンをカレンダーの上に配置 */
+  display: flex;
+  /* ボタンとカレンダーを横並びに */
+  flex-direction: column;
+  /* ボタンをカレンダーの上に配置 */
 }
+
 .button-area {
-  margin-bottom: 0.5em; /* ボタン下の余白を最小化 */
-  display: flex; /* 横並びに配置 */
-  align-items: center; /* ボタンと名前を縦方向に中央揃え */
-  justify-content: space-between; /* 両端のボタンと中央の名前を適切に配置 */
+  margin-bottom: 0.5em;
+  /* ボタン下の余白を最小化 */
+  display: flex;
+  /* 横並びに配置 */
+  align-items: center;
+  /* ボタンと名前を縦方向に中央揃え */
+  justify-content: space-between;
+  /* 両端のボタンと中央の名前を適切に配置 */
 }
+
 .button-area button {
-  margin: 0 10px; /* ボタン間の間隔を調整 */
-  font-size: 0.9em; /* ボタン文字サイズを調整 */
+  margin: 0 10px;
+  /* ボタン間の間隔を調整 */
+  font-size: 0.9em;
+  /* ボタン文字サイズを調整 */
 }
+
 .button-area .calendar-name {
-  text-align: center; /* 名前を中央揃え */
-  font-weight: bold; /* 見た目を少し目立たせる */
-  flex-grow: 1; /* 名前部分を伸ばして中央に配置 */
+  text-align: center;
+  /* 名前を中央揃え */
+  font-weight: bold;
+  /* 見た目を少し目立たせる */
+  flex-grow: 1;
+  /* 名前部分を伸ばして中央に配置 */
 }
-.prev-month{
+
+.prev-month {
   margin-left: 0.5em;
 }
+
 .calendar {
-  margin-top: 5px; /* カレンダーの上部余白を削減 */
+  margin-top: 5px;
+  /* カレンダーの上部余白を削減 */
   max-width: 900px;
   border-top: 1px solid #e0e0e0;
   font-size: 0.8em;
-  margin-bottom: 0; /* 表下の隙間をなくす */
+  margin-bottom: 0;
+  /* 表下の隙間をなくす */
 }
+
 .calendar-weekly {
   display: flex;
   border-left: 1px solid #e0e0e0;
   position: relative;
 }
+
 .calendar-daily {
   flex: 1;
   min-height: 125px;
@@ -374,6 +308,7 @@ export default {
   overflow: hidden;
   height: 100px;
 }
+
 .calendar-youbi {
   flex: 1;
   text-align: center;
@@ -381,40 +316,50 @@ export default {
   background-color: #f9f9f9;
   border-right: 1px solid gainsboro;
 }
+
 .calendar-youbi.sunday {
   color: red;
 }
+
 .calendar-youbi.saturday {
   color: blue;
 }
+
 .calendar-daily.sunday {
   background-color: #ffe5e5;
 }
+
 .calendar-daily.saturday {
   background-color: #e5f3ff;
 }
+
 .calendar-day {
   font-weight: bold;
   text-align: center;
   margin-bottom: 5px;
 }
+
 .calendar-events {
   padding: 5px;
 }
+
 .calendar-event {
-  padding: 1px 3px; /* 余白を調整 */
+  padding: 1px 3px;
+  /* 余白を調整 */
   border-radius: 3px;
   color: white;
-  font-size: 0.7em; /* 文字サイズを小さめに */
+  font-size: 0.7em;
+  /* 文字サイズを小さめに */
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  height: 15px; /* 高さを15pxに */
-  line-height: 15px; /* テキストを高さの中央に配置 */
-  min-width: 40px; /* 幅を狭める */
-  max-width: 80px; /* 最大幅を調整 */
-}
-
-
-</style>
+  height: 15px;
+  /* 高さを15pxに */
+  line-height: 15px;
+  /* テキストを高さの中央に配置 */
+  min-width: 40px;
+  /* 幅を狭める */
+  max-width: 80px;
+  /* 最大幅を調整 */
+}</style>

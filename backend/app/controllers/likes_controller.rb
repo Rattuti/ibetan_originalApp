@@ -2,7 +2,14 @@ class LikesController < ApplicationController
 #    before_action :authenticate_user!
 
     def create
-    like = current_user.likes.new(message_id: params[:message_id])
+    user = User.find_by(email: params[:email])
+    if user.nil?
+        render json: { success: false, error: "User not found" }, status: :not_found
+        return
+    end
+    puts "User found: #{user.name}"
+
+    like = user.likes.new(message_id: params[:message_id])
         if like.save
             render json: { 
                 success: true,
@@ -18,7 +25,7 @@ class LikesController < ApplicationController
     end
 
     def destroy
-    like = current_user.likes.find_by(message_id: params[:message_id])
+    like = user.likes.find_by(message_id: params[:message_id])
         if like
             like.destroy
             render json: {

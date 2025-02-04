@@ -29,78 +29,73 @@ import { ja } from 'date-fns/locale';
 
 export default {
 //export default内はVueの領地
-    components: { 
-        navHeaderBar,
-        ArticleWindow,
-        chatBubble,
-        chatForm,
-        CalendarWindow,
-        navFooterBar,
+  components: { 
+      navHeaderBar,
+      ArticleWindow,
+      chatBubble,
+      chatForm,
+      CalendarWindow,
+      navFooterBar,
+  },
+  data () {
+      return {
+          messages: [],
+          errorMessage:'',//エラーメッセージ保持
+      };
+  },
+  computed: {
+    formattedMessages() {
+      if (!this.messages.length) { return [] }
+      return this.messages.map(message => {
+        let time = message.created_at 
+          ? formatDistanceToNow(new Date(message.created_at), { locale: ja })
+          : '不明な時間';
+        return { ...message, created_at: time }
+      });
     },
-    data () {
-        return {
-            messages: [],
-            errorMessage:'',//エラーメッセージ保持
-        };
-    },
-    computed: {
-    //算出プロパティ
-    //値が変わると自動で計算し、結果を1つだけ持つ
-    //呼び出すたびに計算せず、計算済の結果を返す
-        formattedMessages(){
-            if(!this.messages.length){ return [] }
-            //this.は、vueの領域だけで決めた変数や処理を、vueの領域で呼び出すために使う
-            //this.をつけてmessagesを指定しvue内で呼び出している
-            //※JavaScriptとの区別のため
-            return this.messages.map(message => {
-                let time = formatDistanceToNow(new Date(message.created_at),{ locale: ja } )
-                return { ...message, created_at: time }
-            });
-        },
-    },
-    methods: {
-    async getMessages () {
+  },
+  methods: {
+    async getMessages() {
       try {
         const res = await axios.get('http://localhost:3000/messages', {
           headers: {
             uid: window.localStorage.getItem('uid'),
             "access-token": window.localStorage.getItem('access-token'),
-            client:window.localStorage.getItem('client')
+            client: window.localStorage.getItem('client')
           }
         })
         if (!res) {
-          new Error('メッセージ一覧を取得できませんでした')
+          throw new Error('メッセージ一覧を取得できませんでした')
         }
         this.messages = res.data
       } catch (err) {
-        this.error = 'メッセージ一覧を取得できませんでした'
+        this.errorMessage = 'メッセージ一覧を取得できませんでした'
       }
     },
-    connectCable (message) {
-      this.messageChannel.perform('receive', {
-        message: message,
-        email: window.localStorage.getItem('uid')
-      })
+    connectCable(message) {
+      if (message) {
+        this.messageChannel.perform('receive', {
+          message: message,
+          email: window.localStorage.getItem('uid')
+        })
+      }
+    },
+    connectedAndReceived() {
+      this.getMessages().then(() => {
+        this.$refs.chatBubble.scrollToBottom()
+      });
     }
   },
   mounted () {
-    const cable = ActionCable.createConsumer('ws://localhost:3000/cable')
+    const cable = ActionCable.createConsumer('ws://localhost:3000/cable');
     this.messageChannel = cable.subscriptions.create('RoomChannel', {
-      connected: () => {
-        this.getMessages().then(() => {
-          this.$refs.chatBubble.scrollToBottom()
-        })
-      },
-      received: () => {
-        this.getMessages().then(() => {
-          this.$refs.chatBubble.scrollToBottom()
-        })
-      }
-    })
+      connected: this.connectedAndReceived,
+      received: this.connectedAndReceived
+    });
   },
-    beforeUnmount () {
-        this.messageChannel.unsubscribe()
-    }
+  beforeUnmount () {
+    this.messageChannel.unsubscribe()
+  }
 };
 </script>
 

@@ -1,7 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Welcome from '../views/Welcome'
-import ChatRoom from '../views/ChatRoom'
+import Welcome from '@/views/Welcome'
+import ChatRoom from '@/views/ChatRoom'
 import UserMyPage from '@/views/UserMyPage';
+import eventCreate from '@/components/eventCreate';
+import eventDetail from '@/components/eventDetail';
 import Profile from '@/views/Profile';
 import Policy from '@/views/Policy';
 //import useValidate from '../auth/validate'
@@ -73,6 +75,16 @@ const routes = [
     name: 'Profile',
     component: Profile,
     //beforeEnter: noRequireAuth
+  },
+  {
+    path: '/event/create',
+    name: 'eventCreate',
+    component: eventCreate,
+  },
+  {
+    path: "/event/:id",
+    name: "eventDetail",
+    component: eventDetail
   },
   {
     path: '/Policy',

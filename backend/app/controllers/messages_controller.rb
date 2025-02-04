@@ -2,7 +2,7 @@ class MessagesController < ApplicationController
     #before_action :authenticate_user!, only: ["index"]
 
     def index
-        messages = Message.all
+        messages = Message.includes(:user, likes: :user).all
         messages_array = messages.map do |message|
             {
                 id: message.id,
@@ -19,9 +19,24 @@ class MessagesController < ApplicationController
                 }
             }
         end
-    
-        render json: messages_array, status: 200
-    
+        render json: messages_array, status: :ok
     end
 
+    def create
+        user = User.find_by(email: params[:email])
+        message = Message.find_by(id: params[:message_id])
+    
+        if user.nil? || message.nil?
+            render json: { success: false, error: "User or Message not found" }, status: :not_found
+            return
+        end
+
+        like = user.likes.new(message_id: params[:message_id])
+        if like.save
+            render json: { success: true, id: like.id, email: like.user.email }, status: :created
+        else
+            render json: { success: false, errors: like.errors.full_messages }, status: :unprocessable_entity
+        end
+    end
+      
 end

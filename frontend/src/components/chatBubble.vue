@@ -24,7 +24,7 @@
                     aria-label="いいねアイコン"
                     role="button"
                     tabindex="0"
-                    @click="handleLike(message)"
+                    @click.stop="handleLike(message)"
                 />
                 <span class="heart-count">{{ message.likes.length }}</span>
                 </div>
@@ -70,7 +70,7 @@ export default {
             method,
             headers: this.authHeaders,
             });
-            if (res.status === 200) {
+            if (res.status === 200 || res.status === 201) {
             this.$emit('connectCable');
             } else {
             throw new Error('リクエストに失敗しました');
@@ -91,11 +91,10 @@ export default {
     computed: {
         authHeaders() {
         return {
-            uid: this.uid,
-            'access-token': localStorage.getItem('access-token')||'',
-            client: localStorage.getItem('client')||'',
-        };
-        },
+            uid: this.uid || '',
+            'access-token': localStorage.getItem('access-token') ?? '',
+            client: localStorage.getItem('client') ?? '',
+        };},
     },
     mounted() {
         nextTick(() => {
@@ -107,7 +106,7 @@ export default {
         handler() {
             nextTick(() => this.scrollToBottom());
         },
-        deep: false,
+        deep: true,  // メッセージのネストが変わっても検知できるようにする
         },
     },
 };

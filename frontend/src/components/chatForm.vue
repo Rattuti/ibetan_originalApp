@@ -1,8 +1,9 @@
 <template>
-    <form>
+    <form @submit.prevent="handleSubmit">
         <textarea
             v-model="message"
-            @keydown.enter.prevent="handleSubmit"
+            @keydown.enter.exact.prevent="handleSubmit"
+            @keydown.shift.enter="insertNewLine"
             placeholder="メッセージを入れたらEnterで送信"
             aria-label="メッセージ入力欄"
         ></textarea>
@@ -12,28 +13,29 @@
 <script>
 export default {
     emits: ['connectCable'],
-    data () {
+    data() {
         return {
-            message: ''//ユーザが入力したメッセージ
+            message: ''
         };
     },
     methods: {
-        async handleSubmit () {
-            if(!this.message.trim()){
+        async handleSubmit() {
+            if (!this.message.trim()) {
                 console.warn('空のメッセージは送信できません');
                 return;
             }
-            try{
-                this.$emit('connectCable',
-                this.message.trim());//親に送信
+            try {
+                this.$emit('connectCable', { message: this.message.trim() }); // オブジェクトで送信
                 this.message = ''; // 入力フォームをリセット
-            }catch(error){
-                console.error('メッセージ送信に失敗しました：',error);
+            } catch (error) {
+                console.error('メッセージ送信に失敗しました：', error);
             }
+        },
+        insertNewLine() {
+            this.message += '\n';
         }
     }
 };
-
 </script>
 
 <style scoped>
@@ -43,13 +45,12 @@ form {
 }
 
 textarea {
-    flex-grow: 1; /* 幅いっぱいに広げる */
-    width: 100%;
-    max-width: 100%;
+    flex-grow: 1; /* 横幅を最大限広げる */
+    width: 150%;  /* 念のため明示 */
     margin-bottom: 6px;
-    padding: 5px;
-    box-sizing: border-box;
-    border: 0;
+    padding: 10px;
+    box-sizing: auto;
+    border: 2px solid #677bb4;
     border-radius: 5px;
     font-family: inherit;
     font-size: 16px;
@@ -57,6 +58,5 @@ textarea {
     resize: none;
     min-height: 50px;
     outline: none;
-    border: 2px solid #677bb4; /* フォーカス時の視認性向上 */
 }
 </style>
