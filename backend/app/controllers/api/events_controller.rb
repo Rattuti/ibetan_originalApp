@@ -74,9 +74,20 @@ class Api::EventsController < ApplicationController
         render json: { message: 'Event deleted' }
     end
 
+    # イベントの更新
+    def update
+        @event = Event.find(params[:id])  # パラメータで指定されたIDのイベントを取得
+
+        if @event.update(event_params)  # 更新が成功した場合
+            render json: @event, status: :ok  # 更新されたイベント情報を返す
+        else
+            render json: @event.errors, status: :unprocessable_entity  # エラーが発生した場合はエラーメッセージを返す
+        end
+    end
+
     private
 
     def event_params
-        params.require(:event).permit(:article_id, :title, :start_date, :end_date, :color)
+        params.require(:event).permit(:article_id, :title, :name, :start, :start_date, :end, :end_date, :color)
     end
 end

@@ -3,7 +3,6 @@ import Welcome from '@/views/Welcome'
 import ChatRoom from '@/views/ChatRoom'
 import UserMyPage from '@/views/UserMyPage';
 import eventCreate from '@/components/eventCreate';
-import eventDetail from '@/components/eventDetail';
 import Profile from '@/views/Profile';
 import Policy from '@/views/Policy';
 //import useValidate from '../auth/validate'
@@ -84,8 +83,7 @@ const routes = [
   {
     path: "/event/:id",
     name: "eventDetail",
-    component: eventDetail,
-    props: true,
+    component: () => import("@/components/eventDetail.vue") ,
   },
   {
     path: '/Policy',

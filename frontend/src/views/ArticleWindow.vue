@@ -3,6 +3,7 @@
     <articleScraping
       :articles="articles"
       :pageType="'UserMyPage'"
+      :id="userId || 0"
     />
     <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     <p v-if="isLoading" class="loading">データを読み込み中...</p>
@@ -14,13 +15,28 @@ import articleScraping from "../components/articleScraping";
 import axios from "axios";
 
 export default {
+  props: {
+    id: {
+        type: [Number, String], // Number だけでなく String も許容
+        default: 0,
+        validator: (value) => {
+            return !isNaN(value); // NaN でないことを保証
+        }
+    }
+  },
   components: { articleScraping },
   data() {
     return {
+      userId:"",
       articles: [], // 初期値は空配列
       errorMessage: null,
       isLoading: false,
     };
+  },
+  computed: {
+    numericId() {
+        return Number(this.id) || 0; // id を数値に変換し、0 をデフォルト値とする
+    }
   },
   methods: {
     async fetchArticles() {

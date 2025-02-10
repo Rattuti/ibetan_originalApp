@@ -1,248 +1,190 @@
 <template>
-  <div class="content">
     <div class="button-area">
-      <button class="calendar-btn" @click="prevMonth">前の月</button>
-      <button class="calendar-btn" @click="goToToday">今日</button>
-      <button class="calendar-btn" @click="nextMonth">次の月</button>
-      <span class="calendar-name">カレンダー{{ displayMonth }}</span>
+        <button class="calendar-btn" @click="prevMonth">前の月</button>
+        <button class="calendar-btn" @click="goToToday">今月</button>
+        <button class="calendar-btn" @click="nextMonth">次の月</button>
+        <span class="calendar-name">{{ currentDate.format("YYYY年MM月") }}のカレンダー</span>
     </div>
-    <div class="calendar">
-      <div class="calendar-weekly">
-        <div class="calendar-youbi" v-for="n in 7" :key="n" :class="{
-          sunday: n === 1,
-          saturday: n === 7
-        }">
-          {{ youbi(n - 1) }}
-        </div>
-      </div>
-      <div class="calendar-weekly" v-for="(week, weekIndex) in calendars" :key="weekIndex">
-        <div class="calendar-daily" :class="{
-          outside: currentDate.format('YYYY-MM') !== day.month,
-          sunday: day.date.day() === 0,
-          saturday: day.date.day() === 6
-        }" v-for="day in week" :key="day.date" @click="openEventModal(day.date)">
-          <div class="calendar-day">
-            {{ day.day }}
-          </div>
-          <div class="calendar-events">
-            <div v-for="event in day.dayEvents" :key="event.id" class="calendar-event"
-              :class="{ multiDay: isMultiDayEvent(event) }" 
-              :style="getEventStyle(event, day.date)"
-              @click="() => {
-                console.log('クリックされたイベント:', event);
-                console.log('イベントのデータ構造:', JSON.stringify(event, null, 2));
-                goToEventDetail(event.article_id || event.id);
-              }">
-              {{ event.name }}
-            </div>
 
-            <div v-for="article in articles" :key="article.article_id" class="calendar-event"
-              :class="{ multiDay: isMultiDayEvent(article) }" 
-              :style="getEventStyle(article, day.date)"
-              @click="goToEventDetail(article.article_id)">
-              {{ article.name }}
+    <div class="content">
+        <div class="calendar">
+            <div class="calendar-weekly">
+                <div class="calendar-youbi" v-for="n in 7" 
+                :key="n" 
+                :class="{
+                    sunday: n === 1,
+                    saturday: n === 7
+                }">
+                {{ youbi(n - 1) }}
+                </div>
             </div>
-          </div>
+            <div class="calendar-weekly" 
+                v-for="(week, weekIndex) in calendars" 
+                :key="weekIndex"
+            >
+                <div class="calendar-daily" :class="{
+                    outside: !isCurrentMonth(day.date),
+                    weekend: isWeekend(day.date), 
+                    sunday: day.date.day() === 0,
+                    saturday: day.date.day() === 6,
+                    today: isToday(day.date)
+                    }"
+                    v-for="day in week" 
+                    :key="day.date" 
+                    @click="createNewEvent(day.date)"
+                >
+                    <div class="calendar-day">
+                        {{ day.day }}
+                    </div>
+
+                    <div class="calendar-events">
+                        <div v-for="event in day.dayEvents" 
+                            :key="event.id" 
+                            @click.stop="goToDetail(event)"
+                        >
+                        <div :style="{ backgroundColor: event.color }">
+                            {{ event.name }}
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </template>
 
-<script>
-
-
-import moment from "moment";
+<script setup>
+import { ref, computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import axios from "axios";
+import moment from "moment";
 
-export default {
-  data() {
-    return {
-      currentDate: moment(),
-      articles: [],
-      events: [
-        { id: 2, name: "イベント", start: "2025-02-02", end: "2025-02-03", color: "limegreen" },
-        { id: 3, name: "会議", start: "2025-02-06", end: "2025-02-06", color: "deepskyblue" },
-        { id: 4, name: "有給", start: "2025-02-08", end: "2025-02-08", color: "dimgray" },
-        { id: 5, name: "海外旅行", start: "2025-02-08", end: "2025-02-11", color: "navy" },
-        { id: 6, name: "誕生日", start: "2025-02-16", end: "2025-02-16", color: "orange" },
-        { id: 7, name: "イベント", start: "2025-02-12", end: "2025-02-15", color: "limegreen" },
-        { id: 8, name: "出張", start: "2025-02-12", end: "2025-02-13", color: "teal" },
-        { id: 9, name: "客先訪問", start: "2025-02-14", end: "2025-02-14", color: "red" },
-        { id: 10, name: "パーティ", start: "2025-02-15", end: "2025-02-15", color: "royalblue" },
-        { id: 12, name: "ミーティング", start: "2025-02-18", end: "2025-02-19", color: "blue" },
-        { id: 13, name: "イベント", start: "2025-02-21", end: "2025-02-21", color: "limegreen" },
-        { id: 14, name: "有給", start: "2025-02-20", end: "2025-02-20", color: "dimgray" },
-        { id: 15, name: "イベント", start: "2025-02-25", end: "2025-02-28", color: "limegreen" },
-        { id: 16, name: "会議", start: "2025-02-21", end: "2025-02-21", color: "deepskyblue" },
-        { id: 17, name: "旅行", start: "2025-02-23", end: "2025-02-24", color: "navy" },
-        { id: 18, name: "ミーティング", start: "2025-02-28", end: "2025-02-28", color: "blue" },
-        { id: 19, name: "会議", start: "2025-02-12", end: "2025-02-12", color: "deepskyblue" },
-        { id: 20, name: "誕生日", start: "2025-02-30", end: "2025-02-30", color: "orange" }
-      ],
-    };
-  },
-  created() {
-    this.fetchArticles();// eventsを取得
-  },
-  methods: {
-    async fetchArticles() {
-      try {
-        const response = await axios.get(`http://localhost:3000/api/events`);
-        this.articles = response.data; // APIから取得したデータをそのままセット
-      } catch (error) {
-        console.error("イベントの取得に失敗しました：", error);
-      }
-    },
-    // 記事をカレンダーに追加
-    updateCalendarWithArticles() {
-      this.articles.forEach(this.addArticleToCalendar);
-    },
+const router = useRouter();
+const events = ref([]);
+const currentDate = ref(moment());
 
-    // カレンダーの1日分に記事を追加
-    addArticleToCalendar(article) {
-      console.log("Processing article:", article);
+const isToday = (date) => {
+    return date.isSame(moment(), "day");
+};
 
-      if (!article.event_dates || article.event_dates.trim() === "") {
-        console.warn(`Event dates are empty for article: ${article.article_id}`);
-        return; // 処理をスキップ
-      }
+// API からデータ取得
+const fetchEvents = async () => {
+    try {
+        const [scrapingData, eventData] = await Promise.all([
+            axios.get("http://localhost:3000/api/scraping"),
+            axios.get("http://localhost:3000/api/events")
+        ]);
 
-      article.event_dates.split(",").forEach(date => {
-        const eventMoment = moment(date.trim(), "YYYY-MM-DD");
-        if (!eventMoment.isValid()) {
-          console.warn("Invalid date format:", date);
-          return;
-        }
+        events.value = [
+            ...formatEvents(scrapingData.data.articles, false),
+            ...formatEvents(eventData.data.events ?? eventData.data, true)
+        ];
+    } catch (error) {
+        console.error("データ取得エラー:", error);
+    }
+};
 
-        console.log("Adding event for date:", eventMoment.format("YYYY-MM-DD"));
+// データ整形
+const formatEvents = (data, isEditable) =>
+    (data ?? []).map(item => ({
+        id: `${isEditable ? "evt" : "scr"}_${item.id}`,
+        name: item.name ?? item.title,
+        url: item.url ?? "",
+        start: item.start_time ?? item.start,
+        end: item.end_time ?? item.end,
+        color: item.color ?? "#ccc",
+        isEditable
+    }));
 
-        this.calendars.forEach(week => {
-          week.forEach(day => {
-            if (day.date.isSame(eventMoment, "day")) {
-              if (!day.dayEvents.some(event => event.id === article.article_id)) {
-                const newEvent = this.createEventObject(article, eventMoment);
-                console.log("Created event object:", newEvent); // ここで id を確認
-                day.dayEvents.push(newEvent);
-                console.log("Event added to dayEvents:", day.dayEvents);
-                console.log("Event added:", newEvent);
-              }
-            }
-          });
-        });
-      });
-    },
+// カレンダーの範囲取得
+const getCalendarBounds = () => {
+    const startDate = moment(currentDate.value).startOf("month").startOf("week");
+    //const endDate = moment(currentDate.value).endOf("month").endOf("week");
+    return { startDate};
+};
 
-    // イベントオブジェクトを作成
-    createEventObject(article, eventMoment) {
-      return {
-        id: article.article_id,
-        name: article.title || `記事ID: ${article.article_id}`,
-        start: eventMoment.format("YYYY-MM-DD"),
-        end: eventMoment.format("YYYY-MM-DD"),
-        color: article.color || "#000000", // デフォルト色を設定
-      };
-    },
+// カレンダー作成
+const getCalendar = () => {
+    const { startDate} = getCalendarBounds();
+    const days = [];
+    const current = startDate.clone();
 
-    goToEventDetail(eventId) {
-      console.log("クリックされたイベントID:", eventId);
-      if (!eventId) {
-        console.error("エラー: eventId が undefined です", eventId);
-        return;
-      }
-      this.$router.push({ name: "eventDetail", params: { id: eventId } });
-    },
-
-    openEventModal(dayId) {
-      console.log("新規イベントの作成日:", dayId.format("YYYY-MM-DD"));
-      this.$router.push({
-        name: "eventCreate", // 必ずルート名を使用
-        query: { dayId: dayId.format("YYYY-MM-DD") } // 正しい日付を渡す
-      });
-    },
-
-    // 月移動
-    prevMonth() {
-      this.currentDate = moment(this.currentDate).subtract(1, "month");
-    },
-    nextMonth() {
-      this.currentDate = moment(this.currentDate).add(1, "month");
-    },
-    goToToday() {
-      this.currentDate = moment();
-    },
-
-    // 曜日名を取得
-    youbi(dayIndex) {
-      return ["日", "月", "火", "水", "木", "金", "土"][dayIndex];
-    },
-
-    // カレンダーの範囲を計算
-    getCalendarBounds() {
-      const startDate = moment(this.currentDate).startOf("month").startOf("week");
-      const endDate = moment(this.currentDate).endOf("month").endOf("week");
-      return { startDate, endDate };
-    },
-
-    // カレンダーを生成
-    getCalendar() {
-      const { startDate, endDate } = this.getCalendarBounds();
-      const days = [];
-      const current = startDate.clone();
-
-      while (current.isBefore(endDate)) {
+    while (days.length < 35) { // 35日分確保
         days.push({
-          day: current.date(),
-          date: current.clone(),
-          month: current.format("YYYY-MM"),
-          dayEvents: this.getDayEvents(current)
+            day: current.date(),
+            date: current.clone(),
+            dayEvents: getDayEvents(current)
         });
         current.add(1, "day");
-      }
+    }
 
-      return Array.from({ length: Math.ceil(days.length / 7) }, (_, i) =>
-        days.slice(i * 7, i * 7 + 7)
-      );
-    },
+    return Array.from({ length: 5 }, (_, i) => days.slice(i * 7, i * 7 + 7)); // 5週間固定
+};
 
-    // 1日のイベントを取得
-    getDayEvents(date) {
-      return this.events.filter(event => {
+
+// 今月かどうかを判定
+const isCurrentMonth = (date) => {
+    return date.month() === currentDate.value.month();
+};
+
+// 日付に紐づくイベント取得
+const getDayEvents = (date) => {
+    return events.value.filter(event => {
         const eventStart = moment(event.start, "YYYY-MM-DD");
         const eventEnd = moment(event.end, "YYYY-MM-DD");
         return date.isBetween(eventStart, eventEnd, "day", "[]");
-      });
-    },
-
-    // イベントのスタイルを計算
-    getEventStyle(event, date) {
-      const eventStart = moment(event.start, "YYYY-MM-DD");
-      const eventEnd = moment(event.end, "YYYY-MM-DD");
-
-      return {
-        backgroundColor: event.color,
-        height: "30px",
-        display: date.isBetween(eventStart, eventEnd, "day", "[]") ? "block" : "none"
-      };
-    },
-
-    // マルチデイイベント判定
-    isMultiDayEvent(event) {
-      return moment(event.start).isBefore(moment(event.end));
-    }
-  },
-  computed: {
-    calendars() {
-      return this.getCalendar();
-    },
-    displayMonth() {
-      return this.currentDate.format("YYYY[年]M[月]");
-    }
-  }
+    });
 };
+
+// 空白部分クリックで新規イベント作成ページに遷移
+const createNewEvent = (date) => {
+    router.push({ name: "eventCreate", query: { date: date.format("YYYY-MM-DD") } });
+};
+
+// 詳細ページへ移動
+const goToDetail = (event) => {
+    router.push({ name: "eventDetail", params: { id: event.id } });
+};
+
+// カレンダー制御
+const prevMonth = () => (currentDate.value = moment(currentDate.value).subtract(1, "month"));
+const nextMonth = () => (currentDate.value = moment(currentDate.value).add(1, "month"));
+const goToToday = () => (currentDate.value = moment());
+
+// 曜日名のリスト
+function youbi(dayIndex) {
+    return ["日", "月", "火", "水", "木", "金", "土"][dayIndex];
+}
+
+const calendars = computed(() => getCalendar());
+
+// 土日かどうかを判定
+const isWeekend = (date) => {
+    const dayOfWeek = date.day(); // 日曜日は0、土曜日は6
+    return dayOfWeek === 0 || dayOfWeek === 6;
+};
+
+
+onMounted(fetchEvents);
 </script>
 
-<style>
+<style scoped>
+.button-area {
+  margin-bottom: 0.5em;
+  /* ボタン下の余白を最小化 */
+  display: flex;
+  /* 横並びに配置 */
+  align-items: center;
+  /* ボタンと名前を縦方向に中央揃え */
+  justify-content: space-between;
+  /* 両端のボタンと中央の名前を適切に配置 */
+}
+.button-area button {
+  margin: 0 10px;
+  /* ボタン間の間隔を調整 */
+  font-size: 0.9em;
+  /* ボタン文字サイズを調整 */
+}
 .calendar-btn {
   padding: 4px 8px;
   /* 小さめのパディング */
@@ -254,34 +196,6 @@ export default {
   height: 30px;
   /* 高さを小さく */
 }
-
-.content {
-  margin: 1em auto;
-  width: auto;
-  display: flex;
-  /* ボタンとカレンダーを横並びに */
-  flex-direction: column;
-  /* ボタンをカレンダーの上に配置 */
-}
-
-.button-area {
-  margin-bottom: 0.5em;
-  /* ボタン下の余白を最小化 */
-  display: flex;
-  /* 横並びに配置 */
-  align-items: center;
-  /* ボタンと名前を縦方向に中央揃え */
-  justify-content: space-between;
-  /* 両端のボタンと中央の名前を適切に配置 */
-}
-
-.button-area button {
-  margin: 0 10px;
-  /* ボタン間の間隔を調整 */
-  font-size: 0.9em;
-  /* ボタン文字サイズを調整 */
-}
-
 .button-area .calendar-name {
   text-align: center;
   /* 名前を中央揃え */
@@ -291,28 +205,44 @@ export default {
   /* 名前部分を伸ばして中央に配置 */
 }
 
-.prev-month {
-  margin-left: 0.5em;
-}
-
+/* カレンダー全体 */
 .calendar {
-  margin-top: 5px;
+    margin-top: 5px;
   /* カレンダーの上部余白を削減 */
-  max-width: 900px;
-  border-top: 1px solid #e0e0e0;
-  font-size: 0.8em;
-  margin-bottom: 0;
+    max-width: 900px;
+    border-top: 1px solid #e0e0e0;
+    font-size: 0.8em;
+    margin-bottom: 0;
   /* 表下の隙間をなくす */
 }
-
-.calendar-weekly {
+.content {
+  margin: 1em auto;
+  width: auto;
   display: flex;
-  border-left: 1px solid #e0e0e0;
-  position: relative;
+  /* ボタンとカレンダーを横並びに */
+  flex-direction: column;
+  /* ボタンをカレンダーの上に配置 */
 }
 
+/* 各曜日を表示する部分 */
+.calendar-weekly {
+    display: flex;
+    border-left: 1px solid #e0e0e0;
+    position: relative;
+}
+
+/* 曜日名 */
+.calendar-youbi {
+    flex: 1;
+    text-align: center;
+    padding: 5px 0;
+    background-color: #f9f9f9;
+    border-right: 1px solid gainsboro;
+}
+
+/* 日付ごとの表示 */
 .calendar-daily {
-  flex: 1;
+    flex: 1;
   min-height: 125px;
   border-right: 1px solid gainsboro;
   border-bottom: 1px solid gainsboro;
@@ -320,15 +250,6 @@ export default {
   overflow: hidden;
   height: 100px;
 }
-
-.calendar-youbi {
-  flex: 1;
-  text-align: center;
-  padding: 5px 0;
-  background-color: #f9f9f9;
-  border-right: 1px solid gainsboro;
-}
-
 .calendar-youbi.sunday {
   color: red;
 }
@@ -352,26 +273,33 @@ export default {
 }
 
 .calendar-events {
-  padding: 5px;
-}
-
-.calendar-event {
-  padding: 1px 3px;
+padding: 1px 3px;
   /* 余白を調整 */
   border-radius: 3px;
   color: white;
-  font-size: 0.7em;
-  /* 文字サイズを小さめに */
+  font-size: 0.9em;
+  font-weight: bold;
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  height: 15px;
+  height: auto;
   /* 高さを15pxに */
   line-height: 15px;
-  /* テキストを高さの中央に配置 */
-  min-width: 40px;
-  /* 幅を狭める */
-  max-width: 80px;
-  /* 最大幅を調整 */
-}</style>
+}
+.calendar-events > div {
+  border: 1px solid white; /* 黒色の枠線 */
+  padding: 1px; /* 内側の余白を少し追加 */
+  border-radius: 3px; /* 角を少し丸める（オプション） */
+}
+
+.calendar-daily.outside {
+    background-color: #e0e0e0; /* 灰色 */
+    color: #a0a0a0; /* 文字色を薄く */
+}
+
+.calendar-daily.today {
+  background-color: #ffeb99 !important; /* 明るい黄色 */
+  border: 2px solid #ff9900; /* オレンジの枠線で強調 */
+}
+</style>

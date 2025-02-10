@@ -54,7 +54,7 @@ export default {
             type: String,
             required: true, // 親コンポーネントから必ず渡される
         },
-        article_id: {
+        id: {
             type: Number,
             required: true
         }

@@ -1,88 +1,60 @@
 <template>
     <div>
-        <h1>イベント作成</h1>
+        <h2>新規イベント作成</h2>
         <form @submit.prevent="createEvent">
-            <label>日付:</label>
-            <input type="date" v-model="event.startDate" required />
-
-            <label>イベント名:</label>
-            <input type="text" v-model="event.name" required />
-
-            <button type="submit">登録</button>
-
-            <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-            
-            <button v-if="isDeletable" @click="deleteEvent">削除</button>
+            <div>
+                <label for="title">タイトル</label>
+                <input type="text" v-model="newEvent.title" required />
+            </div>
+            <div>
+                <label for="start_date">日付</label>
+                <input type="date" v-model="newEvent.start_date" required />
+            </div>
+            <div>
+                <label for="color">色</label>
+                <input type="color" v-model="newEvent.color" required />
+            </div>
+            <button type="submit">作成</button>
+            <button type="button" @click="cancelCreateEvent">キャンセル</button>
         </form>
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 import axios from "axios";
-import moment from "moment";
 
-export default {
-    data() {
-        return {
-            event: {
-                id: null,
-                startDate: moment().format("YYYY-MM-DD"),
-                name: "",
-                color: "limegreen",
-            },
-            errorMessage: ""
-        };
-    },
-    created() {
-        // URL パラメータの id が存在する場合のみ詳細を取得
-        const eventId = this.$route.params.id;
-        if (eventId) {
-            this.fetchEventDetail(eventId);
-        }
-    },
-    methods: {
-        async fetchEventDetail(eventId) {
-            try {
-                const response = await axios.get(`http://localhost:3000/api/events/${eventId}`);
-                this.event = response.data;
-            } catch (error) {
-                console.error("イベント詳細の取得に失敗しました:", error);
-                this.errorMessage = "イベント詳細の取得に失敗しました。";
-            }
-        },
-        async createEvent() {
-            try {
-                const newEvent = {
-                    article_id: null,
-                    title: this.event.name,
-                    start_date: this.event.startDate,
-                    end_date: this.event.startDate,
-                    color: this.event.color
-                };
+// router インスタンスを取得
+const router = useRouter();
 
-                // 新規作成の場合には POST リクエストを送信
-                const response = await axios.post("http://localhost:3000/api/events", { event: newEvent });
-                this.event.id = response.data.id;
+// イベント情報のデータ
+const newEvent = ref({
+    title: "",
+    start_date: "",
+    color: "#ffffff",
+});
 
-                // カレンダー画面へリダイレクト
-                this.$router.push("/ChatRoom");
-            } catch (error) {
-                console.error("イベントの保存に失敗しました:", error);
-                this.errorMessage = "イベントの保存に失敗しました。";
-            }
-        }
-    },
-    computed: {
-    isDeletable() {
-        return this.event.id !== null;
+// イベント作成の関数
+const createEvent = async () => {
+    try {
+        await axios.post('http://localhost:3000/api/events', {
+            title: newEvent.value.title,
+            start_date: newEvent.value.start_date,
+            end_date: newEvent.value.start_date,
+            color: newEvent.value.color,
+        });
+
+        alert('イベントが作成されました');
+        router.push("/chatRoom");  // 作成後、ChatRoomページに遷移
+    } catch (error) {
+        console.error("イベント作成エラー:", error);
+        alert("イベント作成に失敗しました");
     }
-}
+};
+
+// フォームキャンセル
+const cancelCreateEvent = () => {
+    router.push("/chatRoom");
 };
 </script>
-
-<style scoped>
-.error {
-    color: red;
-    margin-top: 10px;
-}
-</style>

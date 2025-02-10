@@ -9,7 +9,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     resources :scraping, only: [:index]
-    resources :events, only: [:index, :show, :create, :destroy]
+    resources :events, only: [:index, :show, :create, :destroy, :update]
   end  
 
     resources :articles, only: ['index'] do
