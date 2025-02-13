@@ -8,6 +8,7 @@ class User < ActiveRecord::Base
   include DeviseTokenAuth::Concerns::User
 
   has_many :articles
+  has_many :events, dependent: :destroy  # ユーザーが削除されたらイベントも削除
   has_many :favorites
   has_many :messages
   has_many :likes, dependent: :destroy

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2025_02_04_054615) do
+ActiveRecord::Schema.define(version: 2025_02_12_063629) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(version: 2025_02_04_054615) do
     t.integer "article_id"
     t.string "event_dates"
     t.string "color"
+    t.text "content"
     t.index ["title"], name: "index_articles_on_title", unique: true
   end
 
@@ -47,6 +48,9 @@ ActiveRecord::Schema.define(version: 2025_02_04_054615) do
     t.string "color"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
+    t.text "content"
+    t.boolean "judge", default: false, null: false
     t.index ["article_id"], name: "index_events_on_article_id"
   end
 

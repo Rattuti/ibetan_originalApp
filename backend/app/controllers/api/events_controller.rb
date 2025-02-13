@@ -8,7 +8,9 @@ class Api::EventsController < ApplicationController
                 name: event.title,
                 start: event.start_date, 
                 end: event.end_date,
-                color: event.color
+                color: event.color,
+                content: event.content,
+                judge: event.judge
             }
         }
     end
@@ -24,24 +26,33 @@ class Api::EventsController < ApplicationController
                 if article
                     event_data = {
                         id: event.id,
+                        article_id: event.article_id,
                         name: event.title,
                         start: event.start_date,
                         end: event.end_date,
+                        content: event.content,
                         color: event.color,
                         url: article.url,
                         cost: article.cost,
-                        childcare: article.childcare
+                        childcare: article.childcare,
+                        judge: event.judge
+
                     }
+                    puts "受け取ったarticle_ID: #{params[:article_id]}" # 確認用ログ
+
                 else
                     event_data = { error: "該当する記事が見つかりません", id: params[:id] }
                 end
             else
                 event_data = {
                     id: event.id,
+                    article_id: event.article_id,
                     name: event.title,
                     start: event.start_date,
                     end: event.end_date,
-                    color: event.color
+                    content: event.content,
+                    color: event.color,
+                    judge: event.judge
                 }
             end
             render json: event_data
@@ -54,14 +65,9 @@ class Api::EventsController < ApplicationController
         puts params.inspect  # 受け取ったパラメータのログ
 
         event = Event.new(event_params)
+
         if event.save
-            render json: {
-                id: event.id,
-                name: event.title,
-                start: event.start_date,
-                end: event.end_date,
-                color: event.color
-            }, status: :created
+            render json: event, status: :created
         else
             puts event.errors.full_messages
             render json: event.errors, status: :unprocessable_entity
@@ -88,6 +94,16 @@ class Api::EventsController < ApplicationController
     private
 
     def event_params
-        params.require(:event).permit(:article_id, :title, :name, :start, :start_date, :end, :end_date, :color)
+        params.require(:event).permit(
+            :user_id,
+            :article_id, 
+            :title, :name, 
+            :start, 
+            :start_date, 
+            :end, 
+            :end_date, 
+            :color, 
+            :content
+        )
     end
 end
