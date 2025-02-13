@@ -24,7 +24,9 @@ default: &default
 development:
   <<: *default
   database: backend_development
-  username: postgres
+  username: iishihara96296
+  password: 96296Ih0
+  host: localhost
 
   # The specified database role being used to connect to postgres.
   # To create additional roles in postgres see `$ createuser --help`.
@@ -82,5 +84,6 @@ test:
 production:
   <<: *default
   database: backend_production
-  username: backend
-  password: <%= ENV['BACKEND_DATABASE_PASSWORD'] %>
+  username: iishihara96296
+  password: 96296Ih0
+  host: localhost

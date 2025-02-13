@@ -167,7 +167,7 @@ class ScrapingService
         title: article.title,
         url: article.url,
         color: article.color,
-        click: article.click || 0 # click が nil の場合は 0 にする
+        click: article.favorites.nil? ? 0 : article.click || 0 # favoritesがnilなら0
       }
     end
   end

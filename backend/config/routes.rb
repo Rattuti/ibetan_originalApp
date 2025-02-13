@@ -8,6 +8,8 @@ Rails.application.routes.draw do
   mount ActionCable.server => '/cable'
 
   namespace :api do
+    get 'users/me', to: 'users#me' # 現在のログインユーザー情報取得
+  resources :users, only: [:index, :update, :destroy]
     resources :scraping, only: [:index]
     resources :events, only: [:index, :show, :create, :destroy, :update]
   end  
