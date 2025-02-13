@@ -1,6 +1,6 @@
 class FavoritesController < ApplicationController
   def create
-    logger.debug "Received params: #{params.inspect}" 
+    logger.debug "Received params: #{params.inspect}"
     article = Article.find_by(id: params[:article_id])
     unless article
       render json: { error: "Article not found" }, status: :not_found
@@ -14,17 +14,20 @@ class FavoritesController < ApplicationController
       return
     end
   
-    @favorite = Favorite.find_or_initialize_by(user_id: user.id, article_id: params[:article_id])
+    @favorite = Favorite.find_or_initialize_by(
+      user_id: user.id, 
+      article_id: params[:article_id]
+    )
   
-    # 明示的に `params[:click]` を利用
-    if params[:click].present?
-      @favorite.click = params[:click].to_i
-    else
-      @favorite.click = @favorite.click == 1 ? 0 : 1
-    end
+    # 受け取った `click` 値で状態を更新
+    click_value = params[:favorite][:click]
+    @favorite.click = click_value.to_i
   
     if @favorite.save
-      favorites_count = Favorite.where(article_id: @favorite.article_id, click: 1).count
+      favorites_count = Favorite.where(
+        article_id: @favorite.article_id, 
+        click: 1
+      ).count
   
       # ブロードキャスト
       ActionCable.server.broadcast(
@@ -37,10 +40,15 @@ class FavoritesController < ApplicationController
         }
       )
   
-      render json: { message: 'お気に入りが更新されました', favorite: { article_id: @favorite.article_id, click: @favorite.click } }, status: :ok
+      render json: {
+        message: 'お気に入りが更新されました',
+        favorite: {
+          article_id: @favorite.article_id,
+          click: @favorite.click
+        } 
+      }, status: :ok
     else
       render json: { error: '更新に失敗しました' }, status: :unprocessable_entity
     end
   end
-  
 end

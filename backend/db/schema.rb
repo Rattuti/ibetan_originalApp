@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2025_02_13_054943) do
+ActiveRecord::Schema.define(version: 2025_02_13_144136) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -34,8 +34,8 @@ ActiveRecord::Schema.define(version: 2025_02_13_054943) do
     t.string "article_id"
     t.string "title"
     t.text "content"
-    t.datetime "start_date"
-    t.datetime "end_date"
+    t.string "start_date"
+    t.string "end_date"
     t.boolean "judge", default: false
     t.bigint "user_id"
     t.string "color"
@@ -47,7 +47,7 @@ ActiveRecord::Schema.define(version: 2025_02_13_054943) do
   create_table "favorites", force: :cascade do |t|
     t.integer "user_id"
     t.integer "article_id"
-    t.boolean "click", default: false
+    t.integer "click", default: 0, null: false
   end
 
   create_table "messages", force: :cascade do |t|

@@ -160,14 +160,14 @@ class ScrapingService
   # 既存の記事を取得し、お気に入りのクリック数を含めて返すメソッド
   def self.fetch_existing_articles
     Article.left_joins(:favorites).select(
-      'articles.*, COALESCE(favorites.click, 0) AS click'
+      'articles.*, COALESCE(favorites.click::int, 0) AS click'
     ).map do |article|
       {
         id: article.id,
         title: article.title,
         url: article.url,
         color: article.color,
-        click: article.favorites.nil? ? 0 : article.click || 0 # favoritesがnilなら0
+        click: article.click || 0 # favoritesがnilなら0
       }
     end
   end

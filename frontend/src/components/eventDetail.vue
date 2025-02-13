@@ -9,9 +9,7 @@
             <div class="mb-4">
                 <label class="block text-gray-700 font-bold">色:</label>
                 <input v-model="event.color" type="color" class="w-full h-10 rounded border" />
-            </div>
-
-            <div class="mb-4">
+                
                 <label class="block text-gray-700 font-bold">タイトル:</label>
                 <input v-model="event.name" class="border rounded p-2 w-full" />
             </div>
@@ -45,6 +43,7 @@
             <p class="mt-2"><strong>詳細:</strong> {{ event.content }}</p>
             <p class="mt-2"><strong>費用:</strong> {{ event.cost ?? "-" }}</p>
             <p class="mt-2"><strong>託児:</strong> {{ event.childcare ?? "-" }}</p>
+            <button @click="goBack" class="mt-4 bg-gray-500 text-white rounded p-2 w-full">戻る</button>           
             <contact v-if="event !== null" />
         </div>
     </div>

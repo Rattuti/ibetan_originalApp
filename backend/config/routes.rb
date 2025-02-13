@@ -9,12 +9,12 @@ Rails.application.routes.draw do
 
   namespace :api do
     get 'users/me', to: 'users#me' # 現在のログインユーザー情報取得
-  resources :users, only: [:index, :update, :destroy]
+    resources :users, only: [:index, :update, :destroy]
     resources :scraping, only: [:index]
     resources :events, only: [:index, :show, :create, :destroy, :update]
   end  
 
-    resources :articles, only: ['index'] do
+    resources :articles, only: [:index, :show]  do
       member do
         resources :favorites, only: [:create, :update, :destroy]
       end
