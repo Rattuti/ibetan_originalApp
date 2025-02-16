@@ -44,7 +44,7 @@ export default {
                 }
                 return res
             } catch (error) {
-                if (error.response) {
+                if (error.response && error.response.data.errors) {
                     //バックエンドから詳細なエラー情報が返らされる場合
                     this.error = error.response.data.errors.join(', ')// 詳細エラー表示
                 } else {

@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import VueTailwindDatepicker from 'vue-tailwind-datepicker'
@@ -12,6 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 library.add(faTag, faHeart);
 
 const app = createApp(App)
+app.use(createPinia())// piniaを使う設定
 app.use(router)
 app.use(VueTailwindDatepicker)
 // グローバルコンポーネントとして登録

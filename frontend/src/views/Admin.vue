@@ -1,5 +1,5 @@
 <template>
-  <div v-if="currentUser && currentUser.role === 'admin'">
+  <div v-if="authStore.user?.role === 'admin'">
     <h2>Users</h2>
     <table>
       <thead>
@@ -35,97 +35,86 @@
         </tr>
       </tbody>
     </table>
+
+    <h2>お問い合わせ一覧</h2>
+    <ul>
+      <li v-for="contact in contacts" :key="contact.id">
+        {{ contact.name }}: {{ contact.message }}
+      </li>
+    </ul>
   </div>
   <div v-else>
     <p>権限がありません</p>
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      users: [], // ユーザー一覧
-      currentUser: null, // ログインユーザー情報
-    };
-  },
-  methods: {
-    async fetchCurrentUser() {
-      try {
-        const response = await fetch('/api/current_user'); // APIで現在のユーザー情報を取得
-        this.currentUser = await response.json();
-        if (this.currentUser.role !== 'admin') {
-          alert('管理者権限が必要です');
-          this.$router.push('/'); // 権限がない場合はリダイレクト
-        }
-      } catch (error) {
-        console.error('Error fetching current user:', error);
-      }
-    },
-    async fetchUsers() {
-      try {
-        const response = await fetch('/api/users');
-        this.users = await response.json();
-      } catch (error) {
-        console.error('Error fetching users:', error);
-      }
-    },
-    editUser(user) {
-      this.$set(user, 'isEditing', true);
-    },
-    cancelEdit(user) {
-      user.isEditing = false;
-      this.fetchUsers();
-    },
-    async updateUser(user) {
-      try {
-        await fetch(`/api/users/${user.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: user.name, role: user.role }),
-        });
-        user.isEditing = false;
-        alert('User updated successfully');
-      } catch (error) {
-        console.error('Error updating user:', error);
-        alert('Failed to update user');
-      }
-    },
-    async deleteUser(userId) {
-      if (confirm('Are you sure you want to delete this user?')) {
-        try {
-          await fetch(`/api/users/${userId}`, { method: 'DELETE' });
-          this.fetchUsers();
-        } catch (error) {
-          console.error('Error deleting user:', error);
-          alert('Failed to delete user');
-        }
-      }
-    },
-  },
-  async mounted() {
-    await this.fetchCurrentUser(); // ログインユーザー情報を取得
-    if (this.currentUser?.role === 'admin') {
-      this.fetchUsers(); // 管理者ならユーザー一覧を取得
-    }
-  },
-};
-</script>
+<script setup>
+import { ref, onMounted } from "vue";
+import axios from "axios";
+import { useAuthStore } from "@/stores/auth";
 
-<style scoped>
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-th, td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-th {
-  background-color: #f4f4f4;
-}
-button {
-  margin-right: 5px;
-}
-</style>
+const authStore = useAuthStore();
+const users = ref([]);
+const contacts = ref([]);
+
+// 👤 ユーザー一覧を取得
+const fetchUsers = async () => {
+  try {
+    const response = await axios.get("http://localhost:3000/api/users");
+    users.value = response.data.map(user => ({ ...user, isEditing: false }));
+  } catch (error) {
+    console.error("ユーザー取得エラー", error);
+  }
+};
+
+// 📩 お問い合わせ一覧を取得
+const fetchContacts = async () => {
+  try {
+    const response = await axios.get("http://localhost:3000/api/contacts");
+    contacts.value = response.data;
+  } catch (error) {
+    console.error("データ取得エラー", error);
+  }
+};
+
+// 📝 ユーザー編集モード
+const editUser = (user) => {
+  user.isEditing = true;
+};
+
+// ✅ ユーザー情報を更新
+const updateUser = async (user) => {
+  try {
+    await axios.put(`http://localhost:3000/api/users/${user.id}`, {
+      name: user.name,
+      role: user.role,
+    });
+    user.isEditing = false;
+  } catch (error) {
+    console.error("更新エラー", error);
+  }
+};
+
+// ❌ 編集キャンセル
+const cancelEdit = (user) => {
+  user.isEditing = false;
+};
+
+// 🗑 ユーザー削除
+const deleteUser = async (id) => {
+  try {
+    await axios.delete(`http://localhost:3000/api/users/${id}`);
+    users.value = users.value.filter(user => user.id !== id);
+  } catch (error) {
+    console.error("削除エラー", error);
+  }
+};
+
+// 初回ロード時にデータを取得
+onMounted(() => {
+  if (authStore.user?.role === "admin") {
+    fetchUsers();
+    fetchContacts();
+  }
+});
+</script>

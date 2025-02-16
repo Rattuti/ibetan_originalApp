@@ -6,10 +6,28 @@
                 <img src="/images/logo_Ibetan.png" alt="Logo" class="logo-image" />
             </div>
 
-            <!-- ログインフォーム -->
+            <!-- ログインフォームまたはサインアップフォーム -->
             <div class="form-section">
-                <p class="subtext">お家でもっと地域のコミュニティに参加できるよ</p>
-                <loginForm @redirectToChatRoom="redirectToChatRoom" />
+            <p class="subtext">お家でもっと地域のコミュニティに参加できるよ</p>
+
+                <div v-if="shouldShowLoginForm">
+                    <loginForm @redirectToChatRoom="redirectToChatRoom" />
+                    <p class="change-form">
+                        初めての方は
+                        <span @click="shouldShowLoginForm = false">
+                            こちら
+                        </span>をクリックして<br>ご登録ページへお進みください
+                    </p>
+                </div>
+                <div v-if="!shouldShowLoginForm">
+                    <signupForm @redirectToChatRoom="redirectToChatRoom" />
+                    <p class="change-form">
+                        アカウント登録済の方は
+                        <span @click="shouldShowLoginForm = true">
+                            こちら
+                        </span>からログインしてください
+                    </p>
+                </div>
             </div>
         </div>
 
@@ -39,8 +57,9 @@
 
 <script>
 import loginForm from '../components/loginForm.vue';
+import signupForm from '../components/signupForm.vue';
 export default {
-    components: { loginForm },
+    components: { loginForm, signupForm },
     data(){
         return{
         shouldShowLoginForm: true

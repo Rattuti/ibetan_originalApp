@@ -19,6 +19,7 @@ class User < ActiveRecord::Base
   has_many :favorites
   has_many :messages
   has_many :likes, dependent: :destroy
+  has_many :contacts, dependent: :destroy
 
   validates :name, presence: true
   validates :name, length: { maximum: 30 }
