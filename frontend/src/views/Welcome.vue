@@ -4,18 +4,20 @@
             <!-- ロゴとテキスト -->
             <div class="logo-section">
                 <img src="/images/logo_Ibetan.png" alt="Logo" class="logo-image" />
+
+                <p class="subtext">お家でもっと地域のコミュニティに参加できるよ</p>
+
             </div>
 
             <!-- ログインフォーム -->
             <div class="form-section">
-                <p class="subtext">お家でもっと地域のコミュニティに参加できるよ</p>
                 <loginForm @redirectToChatRoom="redirectToChatRoom" />
             </div>
         </div>
 
         <!-- 機能リスト -->
         <div class="features-section">
-            <h2 class="features-title">このアプリで主にできること</h2>
+            <h2 class="features-title">このアプリでできること</h2>
             <div class="features-list">
                 <div class="feature-item">
                     <h3 class="feature-title">イベントのタグチェック</h3>

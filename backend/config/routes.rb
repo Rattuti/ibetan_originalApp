@@ -10,6 +10,7 @@ Rails.application.routes.draw do
 
   namespace :auth do
     get 'me', to: 'sessions#me' # ログインユーザー情報取得API
+    post 'sign_in', to: 'sessions#create'
     resources :registrations, only: [:create]
   end
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2025_02_16_141920) do
+ActiveRecord::Schema.define(version: 2025_02_17_124915) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -59,6 +59,11 @@ ActiveRecord::Schema.define(version: 2025_02_16_141920) do
     t.integer "click", default: 0, null: false
   end
 
+  create_table "likes", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "event_id"
+  end
+
   create_table "messages", force: :cascade do |t|
     t.bigint "user_id"
     t.string "content"
@@ -70,7 +75,6 @@ ActiveRecord::Schema.define(version: 2025_02_16_141920) do
   create_table "users", force: :cascade do |t|
     t.string "provider", default: "email", null: false
     t.string "uid", default: "", null: false
-    t.string "encrypted_password", default: "", null: false
     t.string "name"
     t.string "email"
     t.json "tokens"
@@ -78,6 +82,14 @@ ActiveRecord::Schema.define(version: 2025_02_16_141920) do
     t.datetime "updated_at", precision: 6, null: false
     t.string "role", default: "user", null: false
     t.string "avatar"
+    t.datetime "confirmed_at"
+    t.string "confirmation_token"
+    t.datetime "confirmation_sent_at"
+    t.string "password_digest"
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.string "encrypted_password", default: "", null: false
+    t.string "unconfirmed_email"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end
