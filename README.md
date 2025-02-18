@@ -1,6 +1,8 @@
-## アプリ制作背景
+## :relieved: はじめに
 
-## アプリで出来ること
+## 💡アプリ制作背景
+
+## 💪アプリで出来ること
 
 ## アプリ機能一覧
 | No | 機能 | 説明 |
@@ -36,15 +38,32 @@
 ## インフラ構成図
 
 ## 使用言語
-##### フロントエンド
+##### フロントエンド  
 ・Node　v14.19.1  
 ・npm　8.15.1  
-・Vue3　5.0.8  
-  
+・Vue3　3.5.13  
+・Vue-CLI　5.0.8  
+| No | 使用ツール | 機能 |
+|:-:|:-:|:-:|
+|1| vue-router | Vueページ操作 |
+|2| pinia | 状態管理ライブラリ |
+|3| vue-axios | Vueでaxiosを使うライブラリ |
+|4|actioncable|RailsのWebSocket通信機能|
+|5|moment|日付や時間を扱うライブラリ|
+|6|fontawesome|アイコン|
+|7|tailwindcss|CSSフレームワーク|
+
+
 ##### バックエンド
 ・Ruby　3.1.2  
 ・Ruby on Rails　7.2.2.1  
 ・PostgreSQL　17.2  
+| No | 使用Gem | 機能 |
+|:-:|:-:|:-:|
+|1|rack-cors|CORS設定(データ送受信Vue.js⇔Rails)|
+|2|devise|ログイン機能導入(Railsアプリ用)|
+|3|devise_token_auth|tokenを用いたAPI向けログイン機能導入|
+|4|mechanize|Webサイト自動操作用(スクレイピング)| 
   
 ## ER図
 ![ER図_ibetan_OriginalApp_](https://github.com/user-attachments/assets/ecfa2197-4750-4846-8a53-a007c3564d65)
@@ -77,4 +96,5 @@
 ## URL
 
 Qiitaに詳細を執筆しております。
+
 
