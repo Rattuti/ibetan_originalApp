@@ -66,7 +66,7 @@
 |4|mechanize|Webサイト自動操作用(スクレイピング)| 
   
 ## ER図
-![ER図_ibetan_OriginalApp_](https://github.com/user-attachments/assets/ecfa2197-4750-4846-8a53-a007c3564d65)
+![ER図_ibetan_OriginalApp](https://github.com/user-attachments/assets/3f3d9363-fee7-44d6-bd1d-c979d1c16b4e)
 
 ## 各テーブルと説明
 |No.| テーブル名 | 説明 |
