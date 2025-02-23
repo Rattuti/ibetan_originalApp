@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-  <navHeaderBar />
+    <navHeaderBar />
     <div class="my-page">
       <h1>マイページ</h1>
       <div class="content">
@@ -8,119 +8,103 @@
         <div class="profile-section">
           <label class="profile-label">
             <div v-if="user.avatar" class="avatar-container">
-              <img :src="user.avatar"
-                    alt="プロフィール画像"
-                    class="avatar"
-              />
+              <img v-if="user.avatar" :src="user.avatar" alt="プロフィール画像" class="avatar" />
             </div>
-            <div v-else class="avatar-placeholder">
-              画像未設定
-            </div>
-            <input
-              type="file"
-              @change="onFileChange"
-              class="file-input"
-              id="file"
-              />
-            <label for="file"
-              class="custom-file-label">
-                画像を選択
-            </label>
+            <div v-else class="avatar-placeholder">画像未設定</div>
+            <input type="file" @change="onFileChange" class="file-input" id="file" />
+            <label for="file" class="custom-file-label">画像を選択</label>
           </label>
           <div class="info-container">
             <label>
-            ニックネーム:
-            <input v-model="user.nickname" 
-              placeholder="ニックネームを入力"
-            />
-          </label>
-            <p><strong>お名前:</strong>
-                {{ user.name || '未設定' }}
-            </p>
-            <p><strong>メールアドレス:</strong>
-                {{ user.email || '未設定' }}
-            </p>
+              ニックネーム:
+              <input v-model="user.nickname" placeholder="ニックネームを入力" />
+            </label>
+            <p><strong>お名前:</strong> {{ user?.name || "未設定" }}</p>
+            <p><strong>メールアドレス:</strong> {{ user?.email || "未設定" }}</p>
+            <div class="button-container">
+              <button @click="saveChanges">変更を保存</button>
+              <button @click="goToProfile">プロフィール編集</button>
+            </div>
           </div>
         </div>
       </div>
-      <div class="button-container">
-        <button @click="saveChanges">変更を保存</button>
-        <button @click="goToProfile">プロフィール編集</button>
-      </div>
+
     </div>
     <ArticleWindow />
     <contact />
     <navFooterBar />
-    </div>
+  </div>
 </template>
 
 <script>
-import navHeaderBar from '../components/navHeaderBar';
-import ArticleWindow from './ArticleWindow';
-import contact from '../components/contact';
-import navFooterBar from '../components/navFooterBar';
-
-
-import{reactive, onMounted} from "vue";
-import axios from 'axios'
-//import setItem from '../auth/setItem'
-
+import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
+import axios from "axios";
+import navHeaderBar from "../components/navHeaderBar";
+import ArticleWindow from "./ArticleWindow";
+import contact from "../components/contact";
+import navFooterBar from "../components/navFooterBar";
+import { useAuthStore } from "@/stores/auth"; // Piniaのauthストアをインポート
 
 export default {
-  components:{
+  components: {
     navHeaderBar,
     contact,
     navFooterBar,
-    ArticleWindow
-},
-
+    ArticleWindow,
+  },
   name: "UserMyPage",
   setup() {
-    // ユーザーデータのリアクティブ管理
-    const user = reactive( {
-        name: '',
-        email: '',
-        nickname: '',
-        avatar: null// 画像の情報
-    });
+    const authStore = useAuthStore(); //useAuthStoreの呼び出し
+    const user = ref(authStore.user || { name: "", email: "", nickname: "", avatar: "" }); // Pinia ストアから user を取得
 
-    // ローカルストレージから初期化
+    // ヘッダーの取得
+    const getAuthHeaders = authStore.getAuthHeaders;
+    const router = useRouter();
+
+    // ユーザーのファイルとニックネーム
+    const avatarFile = ref(null);  // アバター画像ファイルを格納
+
+    // ローカルストレージからユーザー情報を読み込む
     onMounted(() => {
       const savedUser = localStorage.getItem("user");
       if (savedUser) {
         const parsedUser = JSON.parse(savedUser);
-        user.name = parsedUser.name;
-        user.email = parsedUser.email;
-        user.nickname = parsedUser.nickname;
-        user.avatar = parsedUser.avatar;
+        user.value.id = parsedUser.id;
+        user.value.name = parsedUser.name;
+        user.value.email = parsedUser.email;
+        user.value.nickname = parsedUser.nickname;
+        user.value.avatar = parsedUser.avatar;
       } else {
         alert("ユーザー情報がありません。再度ログインしてください。");
       }
     });
 
-    //ファイル選択時の処理
+    // ファイル選択時の処理
     const onFileChange = (event) => {
-        const file = event.target.files[0]
-        if (file) {
-            const reader = new FileReader()
-            reader.onload = () => {
-              user.avatar = reader.result; // Base64に変換して保存
-            };
-            reader.readAsDataURL(file)
-        }
-      };
+      const file = event.target.files[0];
+      if (file) {
+        avatarFile.value = file; // 選択されたファイルを保存
+        user.value.avatar = URL.createObjectURL(file); // プレビュー用
+        saveAvatar(file); // API にアップロード
+      }
+    };
 
-      const saveChanges = () => {// ローカルストレージに変更を保存
-        axios
-        .post('http://localhost:3000/auth/sign_in', user)
+    // ユーザー情報を更新
+    const saveChanges = () => {
+      axios
+        .put(`http://localhost:3000/api/users/${user.value.id}`, { nickname: user.value.nickname }, {
+          headers: getAuthHeaders(),
+        })
         .then((response) => {
-          console.log('Response:', response); 
+          console.log("Response:", response);
           // サーバーからの最新情報を反映
           const updatedUser = response.data;
-          user.name = updatedUser.name;
-          user.email = updatedUser.email;
-          user.nickname = updatedUser.nickname;
-          user.avatar = updatedUser.avatar;
+          user.value.id = updatedUser.id
+          user.value.name = updatedUser.name;
+          user.value.email = updatedUser.email;
+          user.value.nickname = updatedUser.nickname;
+          user.value.avatar = updatedUser.avatar;
 
           // ローカルストレージに保存
           localStorage.setItem("user", JSON.stringify(user));
@@ -130,26 +114,48 @@ export default {
           console.error(error);
           alert("保存中にエラーが発生しました。");
         });
-      };
+    };
 
-      // プロフィール編集ページに遷移
-      const goToProfile = () => {
-        window.location.href = "/UserMyPage/Profile";
-      };
+    // アバター画像を保存
+    const saveAvatar = (file) => {
+      const userId = user.value.id;
+      const formData = new FormData();
+      formData.append("avatar", file);
 
-      return{ user, onFileChange, saveChanges, goToProfile };
-    },
-    async fetchFavoriteArticles() {
-      try {
-          const response = await this.$axios.get('/favorites');
-          this.articles = response.data;
-      } catch (error) {
-          this.errorMessage = "お気に入り記事の取得に失敗しました。";
-          console.error(error);
-      }
-    }
+      axios
+        .put(`http://localhost:3000/api/users/${userId}`, formData, {
+          headers: {
+            ...getAuthHeaders(),
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((response) => {
+          user.value.avatar = response.data.avatar; // URLをセット
+          localStorage.setItem("user", JSON.stringify(user.value));
+          alert("アバターが更新されました！");
+        })
+        .catch((error) => {
+          console.error("アバターのアップロードに失敗:", error);
+        });
+    };
+
+
+    // プロフィール編集ページに遷移
+    const goToProfile = () => {
+      router.push("/UserMyPage/Profile");
+    };
+
+    return {
+      user,
+      onFileChange,
+      saveChanges,
+      saveAvatar,  // saveAvatarをsetup()内で利用できるように
+      goToProfile,
+    };
+  },
 };
 </script>
+
 
 <style>
 .button-container {

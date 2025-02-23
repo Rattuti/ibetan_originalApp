@@ -1,4 +1,5 @@
 class MessagesController < ApplicationController
+    skip_before_action :verify_authenticity_token, only: [:create] # 必要なアクションに対してのみ無効化
     #before_action :authenticate_user!, only: ["index"]
 
     def index
@@ -38,5 +39,4 @@ class MessagesController < ApplicationController
             render json: { success: false, errors: like.errors.full_messages }, status: :unprocessable_entity
         end
     end
-      
 end

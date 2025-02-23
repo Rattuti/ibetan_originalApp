@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import {ref} from 'vue'
 import axios from 'axios'
 
 axios.defaults.withCredentials = true;
@@ -7,19 +7,18 @@ axios.defaults.withCredentials = true;
 const API_URL = 'http://localhost:3000/auth'
 
 export const useAuthStore = defineStore('auth', () => {
+// 状態
     const user = ref(null);
     const isAuthenticated = ref(false);
 
     const getAuthHeaders = () => {
         const authHeaders = JSON.parse(localStorage.getItem("authHeaders"));
-        
-        // authHeaders が存在し、必要なプロパティが全て揃っているかチェック
+    
         if (!authHeaders || !authHeaders["access-token"] || !authHeaders["client"] || !authHeaders["uid"]) {
             console.warn("認証ヘッダーが無効:", authHeaders);
             return null;
         }
-        
-        // ヘッダーを返す
+    
         return {
             "access-token": authHeaders["access-token"],
             "client": authHeaders["client"],
@@ -29,7 +28,6 @@ export const useAuthStore = defineStore('auth', () => {
             "Content-Type": "application/json"
         };
     };
-    
 
     // ログイン処理
     const login = async (email, password) => {
@@ -56,9 +54,7 @@ export const useAuthStore = defineStore('auth', () => {
             };
             localStorage.setItem('authHeaders', JSON.stringify(authHeaders));
 
-            // **ユーザー情報取得**
-            await fetchUser();
-
+    
             return response.data;
         } catch (error) {
             console.error("ログインエラー:", error.response?.data);
@@ -67,7 +63,7 @@ export const useAuthStore = defineStore('auth', () => {
     };
 
     // 新規登録処理
-    const signUp = async (name, email, password) => {
+    async function signUp(name, email, password) {
         try {
             const requestData = {
                 registration: { 
@@ -99,7 +95,7 @@ export const useAuthStore = defineStore('auth', () => {
             console.error('新規登録失敗:', error.response?.data || error.message);
             throw error;
         }
-    };
+    }
 
     // ログアウト処理
     const logout = async () => {
@@ -127,21 +123,21 @@ export const useAuthStore = defineStore('auth', () => {
     const fetchUser = async () => {
         const headers = getAuthHeaders();
         if (!headers) {
-            console.warn('認証情報がありません');
-            isAuthenticated.value = false;
-            return;
+            console.warn('認証情報がありません')
+            return
         }
 
         try {
-            const response = await axios.get(`${API_URL}/validate_token`, { headers });
-            user.value = response.data.data;
-            isAuthenticated.value = true;
+            const response = await axios.get(`${API_URL}/validate_token`, { headers })
+            user.value = response.data.data
+            isAuthenticated.value = true
         } catch (error) {
-            console.error('ユーザー情報取得失敗:', error.response?.data || error.message);
-            await useAuthStore().logout();
+            console.error('ユーザー情報取得失敗:', error.response?.data || error.message)
+            logout()
         }
-    };
+    }
 
+    // ストアで定義した状態のメソッドを返して、コンポーネントから使用できるようにしている
     return {
         user,
         isAuthenticated,
@@ -150,5 +146,5 @@ export const useAuthStore = defineStore('auth', () => {
         logout,
         fetchUser,
         getAuthHeaders
-    };
-});
+    }
+})

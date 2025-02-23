@@ -6,6 +6,7 @@
         </div>
         <div class="footer-content">
             <ul class="footer-nav">
+                <li><a href="/">Top</a></li>                
                 <li><a href="/ChatRoom">ホーム</a></li>
                 <li><a href="/policy">プライバシーポリシー</a></li>
                 <li><a href="/UserMyPage">お問い合わせ</a></li>

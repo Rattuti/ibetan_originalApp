@@ -1,13 +1,15 @@
 <template>
     <div v-if="shouldShowLoginForm">
-        <h2>ログインユーザ情報入力</h2>
         <form @submit.prevent="handleLogin">
+        <h2>ログインユーザ情報入力</h2>
             <input v-model="email" 
+                id="email"
                 type="email" 
                 placeholder="メールアドレス" 
                 required 
             />
             <input v-model="password" 
+                id="password"
                 type="password" 
                 placeholder="パスワード" 
                 required 
@@ -24,7 +26,7 @@
         <p v-if="authStore.isAuthenticated">ログイン中: {{ authStore.user?.name }}</p>
     </div>
 
-    <div v-else>
+    <div v-else >
         <!-- 新規登録フォーム -->
         <h2>新規ユーザー情報登録</h2>
         <form @submit.prevent="handleSignUp">
@@ -87,9 +89,11 @@ const toggleForm = () => {
 
 // ログイン処理
 const handleLogin = async () => {
-    console.log("ログイン情報:", email.value, password.value) // ✅ ログ出力
     try {
-        await authStore.login(email.value, password.value)
+        await authStore.login( 
+            email.value,
+            password.value
+        )
         alert('ログイン成功！')
         router.push('/chatRoom')
     } catch (error) {
@@ -99,18 +103,21 @@ const handleLogin = async () => {
 
 // 新規登録処理
 const handleSignUp = async () => {
-    console.log("新規登録情報:", signUpName.value, signUpEmail.value, )
     if (signUpPassword.value !== signUpPasswordConfirmation.value) {
         alert('パスワードと確認用パスワードが一致しません')
-        return
+    return
     }
-
     try {
-        await authStore.signUp(signUpName.value, signUpEmail.value, signUpPassword.value, signUpPasswordConfirmation.value)
+        await authStore.signUp(
+            signUpName.value,
+            signUpEmail.value,
+            signUpPassword.value,
+            signUpPasswordConfirmation.value
+    )
         alert('新規登録成功！')
         router.push('/chatRoom')
     } catch (error) {
-        alert('新規登録失敗')
+    alert('新規登録失敗')
     }
 }
 

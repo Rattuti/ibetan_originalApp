@@ -41,6 +41,8 @@
 
 <script>
 import { createConsumer } from "@rails/actioncable";
+import { useAuthStore } from "@/stores/auth";
+
 import axios from "axios";
 
 export default {
@@ -88,7 +90,7 @@ export default {
         setupCable(socketUrl) {
             this.cable = createConsumer(socketUrl);
             this.subscription = this.cable.subscriptions.create(
-                { channel: "FavoriteChannel", article_id: this.article_id },
+                { channel: "FavoriteChannel", article_id: this.id },
                 {
                     received: (data) => {
                         console.log("ActionCable 受信:", data);
@@ -115,16 +117,24 @@ export default {
 
             try {
                 const apiUrl = process.env.VUE_APP_API_URL || 'http://localhost:3000';
-
                 const clickValue = item.click === 1 ? 0 : 1;
 
                 console.log("APIリクエストURL:", `${apiUrl}/articles/${item.article_id}/favorites`);
-                console.log("送信データ:", { article_id: item.article_id, click: clickValue });
+                console.log("送信データ:", { favorite: { article_id: item.article_id, click: clickValue } });
+
+                const authStore = useAuthStore(); // Pinia ストアを取得
+                const headers = authStore.getAuthHeaders(); // getAuthHeaders を取得
+
+                console.log("🔍 送信ヘッダー: ", headers);
+
 
                 const response = await axios.post(`${apiUrl}/articles/${item.article_id}/favorites`, {
-                    article_id: item.article_id,
-                    click: clickValue
-                });
+                    favorite: {
+                        article_id: item.article_id,
+                        click: clickValue
+                    }
+                }, { headers: headers }
+                );
 
                 console.log("APIレスポンス:", response.data);
 
@@ -134,17 +144,26 @@ export default {
                     throw new Error("お気に入りの更新に失敗しました。");
                 }
             } catch (error) {
-                this.errorMessage = "お気に入りの更新に失敗しました。";
+            this.errorMessage = "お気に入りの更新に失敗しました。";
+            if (error.response) {
+                console.error("サーバーエラーレスポンス:", error.response.data);
+            } else {
                 console.error("APIリクエストエラー:", error);
             }
-        },
+            }
+        }
     },
+
     beforeUnmount() {
+        if (this.subscription) {
+            this.subscription.unsubscribe();
+        }
         if (this.cable) {
             this.cable.disconnect();
         }
     }
-}
+
+};
 </script>
 
 

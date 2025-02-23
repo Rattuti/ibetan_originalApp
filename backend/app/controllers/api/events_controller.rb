@@ -1,4 +1,6 @@
-class Api::EventsController < ApplicationController
+module Api
+    class EventsController < ApplicationController
+
     def index
         @events = Event.all
         render json: @events.map {
@@ -36,10 +38,8 @@ class Api::EventsController < ApplicationController
                         cost: article.cost,
                         childcare: article.childcare,
                         judge: event.judge
-
                     }
                     puts "受け取ったarticle_ID: #{params[:article_id]}" # 確認用ログ
-
                 else
                     event_data = { error: "該当する記事が見つかりません", id: params[:id] }
                 end
@@ -103,7 +103,9 @@ class Api::EventsController < ApplicationController
             :end, 
             :end_date, 
             :color, 
-            :content
+            :content,
+            :judge
         )
     end
+end
 end

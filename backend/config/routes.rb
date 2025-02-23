@@ -1,31 +1,31 @@
 Rails.application.routes.draw do
-  constraints format: :json do
-    mount_devise_token_auth_for 'User', at: 'auth', controllers: {
-      registrations: 'auth/registrations',
-      sessions: 'auth/sessions'  # 明示的に追加
-    }
-  end
+  # DeviseTokenAuth のルート
+  mount_devise_token_auth_for 'User', at: 'auth', controllers: {
+    registrations: 'auth/registrations',
+    sessions: 'auth/sessions'
+  }
 
   mount ActionCable.server => '/cable'
 
-  namespace :auth do
-    get 'me', to: 'sessions#me' # ログインユーザー情報取得API
-    post 'sign_in', to: 'sessions#create'
-    resources :registrations, only: [:create]
-  end
-
+  # 一般ユーザー用エンドポイント
   namespace :api do
-    resources :users, only: [:index, :update, :destroy]
+    resources :users, only: [:index, :show, :update, :destroy]
     resources :scraping, only: [:index]
     resources :events, only: [:index, :show, :create, :destroy, :update]
     resources :contacts, only: [:create]
   end  
+
+  # 管理者専用エンドポイント
+  namespace :admin do
+    resources :users, only: [:index, :update, :destroy]  # 管理者用のユーザー管理
+  end
 
   resources :articles, only: [:index, :show] do
     resources :favorites, only: [:create, :update, :destroy], shallow: true
   end
 
   resources :messages, only: [:index] do
+  #resources :messages, only: [:index, :show, :create, :destroy] do
     resources :likes, only: [:create, :destroy]
   end
 end

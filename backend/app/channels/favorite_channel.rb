@@ -1,7 +1,10 @@
 class FavoriteChannel < ApplicationCable::Channel
   def subscribed
-    # お気に入り機能の特定の「記事」または「タグ」に関連付けたストリームに接続
-    stream_from "favorite_channel_#{params[:article_id]}"
+    if current_user
+      stream_from "favorite_channel_#{params[:article_id]}"
+    else
+      reject_unauthorized_connection
+    end
   end
 
   def unsubscribed
@@ -14,12 +17,26 @@ class FavoriteChannel < ApplicationCable::Channel
 
     # 記事が存在するか確認
     article = Article.find_by(id: article_id)
-    return unless article
+    unless article
+      # エラーメッセージを送信
+      ActionCable.server.broadcast(
+        "favorite_channel_#{params[:article_id]}",
+        { error: "Article not found" }
+      )
+      return
+    end
 
-    user = User.first
-    # user = User.find_by(id: user.id)
-    return unless user
+    user = current_user
+    unless user
+      # エラーメッセージを送信
+      ActionCable.server.broadcast(
+        "favorite_channel_#{params[:article_id]}",
+        { error: "User not found" }
+      )
+      return
+    end
 
+    # すでにお気に入りが存在するか確認
     favorite = Favorite.find_by(user_id: user.id, article_id: article.id)
     
     if favorite
