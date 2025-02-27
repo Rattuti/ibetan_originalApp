@@ -1,30 +1,39 @@
 class RoomChannel < ApplicationCable::Channel
-  def subscribed
-    # stream_from "some_channel"
-    stream_from 'room_channel'
-  end
-
-  def unsubscribed
-    # Any cleanup needed when channel is unsubscribed
-  end
-
-  def receive(data)
-    user = User.find_by(email: data['email'])
-    
-    unless user
-      Rails.logger.error "User not found for email: #{data['email']}"
-      return
+    def subscribed
+    stream_from "room_channel_#{current_user.id}"
+    Rails.logger.info "✅ RoomChannel に接続しました (User: #{current_user.email})"
     end
 
-    if message = Message.create(content: data['message'], user_id: user.id)
-      ActionCable.server.broadcast 'room_channel', {
-        message: data['message'], 
-        name: user.name, 
-        created_at: message.created_at
-      }
+    def receive(data)
+    unless current_user
+        Rails.logger.error "❌ current_user が nil です"
+        return 
+    end
+
+    Rails.logger.debug "📩 受信データ: #{data}"
+
+    content = data["message"].is_a?(Hash) ? data["message"]["text"] : data["message"]
+    if content.blank?
+        Rails.logger.error "❌ メッセージが空のため、保存をスキップ"
+        return
+    end
+
+    message = current_user.messages.create(content: content)
+
+    if message.persisted?
+        broadcast_data = {
+        id: message.id,
+        user_id: message.user.id,
+        name: message.user.name,
+        content: message.content,
+        created_at: message.created_at,
+        email: message.user.email
+        }
+
+        Rails.logger.debug "🚀 ブロードキャストするデータ: #{broadcast_data}"
+        ActionCable.server.broadcast("room_channel_#{current_user.id}", broadcast_data)
     else
-      Rails.logger.error "Failed to save message: #{message.errors.full_messages.join(', ')}"
+        Rails.logger.error "❌ メッセージの保存に失敗しました"
     end
-  end
-
+    end
 end

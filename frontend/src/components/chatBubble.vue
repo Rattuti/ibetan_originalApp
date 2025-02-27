@@ -17,7 +17,7 @@
                 :aria-label="`メッセージ内容：${message.content}`"
             >
                 {{ message.content }}
-                <div v-if="message.likes.length" class="heart-container">
+                <div v-if="message.likes && message.likes.length" class="heart-container">
                 <font-awesome-icon
                     icon="heart"
                     class="heart"
@@ -38,46 +38,69 @@
 
 <script>
 import axios from 'axios';
+import { useAuthStore } from "@/stores/auth";
 import { nextTick } from 'vue';
 
 export default {
     emits: ['connectCable'],
-    props: ['messages'],
+    props: {
+        messages:{
+            type: Array,
+            default: () =>[] //空配列をデフォルトに
+        }
+    },
     data() {
         return {
-        uid: localStorage.getItem('uid'),
+            authStore: useAuthStore(),  // Piniaストアのインスタンスを取得
         };
+    },
+    computed: {
+        uid() {
+            console.log("現在のuid",this.authStore.uid);
+            return this.authStore.uid;  // Piniaストアからuidを取得
+        },
+        authHeaders() {
+            return {
+                uid: this.uid || '',
+                'access-token': localStorage.getItem('access-token') ?? '',
+                client: localStorage.getItem('client') ?? '',
+            };
+        },
     },
     methods: {
         async handleLike(message) {
-        const like = message.likes.find(like => like.email === this.uid);
-        like ? await this.deleteLike(like.id) : await this.createLike(message.id);
+            if(!message.liikes) return;
+            const like = message.likes.find(like => like.email === this.uid);
+            like ? await this.deleteLike(message.id, like.id) : await this.createLike(message.id);
         },
         async createLike(messageId) {
-        await this.sendLikeRequest(
-            `http://localhost:3000/messages/${messageId}/likes`,
-            'post'
-        );},
-        async deleteLike(likeId) {
-        await this.sendLikeRequest(
-            `http://localhost:3000/likes/${likeId}`,
-            'delete'
-        );},
-        async sendLikeRequest(url, method) {
-        try {
-            const res = await axios({
-            url,
-            method,
-            headers: this.authHeaders,
-            });
-            if (res.status === 200 || res.status === 201) {
-            this.$emit('connectCable');
-            } else {
-            throw new Error('リクエストに失敗しました');
+            await this.sendLikeRequest(
+                `http://localhost:3000/messages/${messageId}/likes`,
+                'post'
+            );
+        },
+        async deleteLike(messageId, likeId) {
+            await this.sendLikeRequest(
+                `http://localhost:3000/messages/${messageId}/likes/${likeId}`,
+                'delete'
+            );
+        },
+        async sendLikeRequest(url, method, data = {}) {
+            try {
+                const res = await axios({
+                url,
+                method,
+                headers: this.authHeaders,
+                data
+                });
+                if (res.status === 200 || res.status === 201) {
+                this.$emit('connectCable');
+                } else {
+                throw new Error('リクエストに失敗しました');
+                }
+            } catch (error) {
+                console.error(error.message);
             }
-        } catch (error) {
-            console.error(error.message);
-        }
         },
         scrollToBottom() {
         const element = this.$refs.messages;
@@ -88,14 +111,6 @@ export default {
         }
         },
     },
-    computed: {
-        authHeaders() {
-        return {
-            uid: this.uid || '',
-            'access-token': localStorage.getItem('access-token') ?? '',
-            client: localStorage.getItem('client') ?? '',
-        };},
-    },
     mounted() {
         nextTick(() => {
         this.scrollToBottom();
@@ -103,12 +118,16 @@ export default {
     },
     watch: {
         messages: {
-        handler() {
-            nextTick(() => this.scrollToBottom());
-        },
-        deep: true,  // メッセージのネストが変わっても検知できるようにする
-        },
-    },
+            handler(newMessages) {
+                console.log("chatBubble.vueでmessagesが更新されました", newMessages);
+                newMessages.forEach(msg => console.log("message.content:", msg.content));
+                this.$nextTick(() => {
+                    this.scrollToBottom();
+                });
+            },
+            deep: true
+        }
+    }
 };
 </script>
 

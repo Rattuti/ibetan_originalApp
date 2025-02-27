@@ -1,5 +1,5 @@
 class MessagesController < ApplicationController
-    skip_before_action :verify_authenticity_token, only: [:create] # 必要なアクションに対してのみ無効化
+    #skip_before_action :verify_authenticity_token, only: [:create] # 必要なアクションに対してのみ無効化
     #before_action :authenticate_user!, only: ["index"]
 
     def index
@@ -21,6 +21,7 @@ class MessagesController < ApplicationController
             }
         end
         render json: messages_array, status: :ok
+
     end
 
     def create
@@ -32,11 +33,12 @@ class MessagesController < ApplicationController
             return
         end
 
-        like = user.likes.new(message_id: params[:message_id])
+        like = user.likes.build(message: message)
         if like.save
             render json: { success: true, id: like.id, email: like.user.email }, status: :created
         else
             render json: { success: false, errors: like.errors.full_messages }, status: :unprocessable_entity
         end
     end
+
 end

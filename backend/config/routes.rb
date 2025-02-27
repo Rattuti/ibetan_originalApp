@@ -24,8 +24,7 @@ Rails.application.routes.draw do
     resources :favorites, only: [:create, :update, :destroy], shallow: true
   end
 
-  resources :messages, only: [:index] do
-  #resources :messages, only: [:index, :show, :create, :destroy] do
-    resources :likes, only: [:create, :destroy]
-  end
+    resources :messages, only: [:index, :create] do
+      resources :likes, only: [:create, :destroy]
+    end
 end

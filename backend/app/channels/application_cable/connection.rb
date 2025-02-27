@@ -4,21 +4,22 @@ module ApplicationCable
 
     def connect
       self.current_user = find_verified_user
+      reject_unauthorized_connection unless current_user
       logger.add_tags 'ActionCable', current_user.email
     end
 
     private
 
     def find_verified_user
-      uid = request.params[:uid]
+      uid = request.params[:uid] # ここが NULL にならないかチェック
       client = request.params[:client]
-      token = request.params[:token]
+      access_token = request.params[:"access-token"]
 
-      return reject_unauthorized_connection if uid.blank? || client.blank? || token.blank?
+      logger.debug "🔍 Authorization: uid=#{uid}, client=#{client}, token=#{access_token}"
 
       user = User.find_by(uid: uid)
 
-      if user && user.valid_token?(token, client)
+      if user && user.valid_token?(access_token, client)
         user
       else
         reject_unauthorized_connection

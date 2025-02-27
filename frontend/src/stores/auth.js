@@ -29,7 +29,7 @@ export const useAuthStore = defineStore('auth', () => {
             "Content-Type": "application/json"
         };
     };
-    
+
 
     // ログイン処理
     const login = async (email, password) => {

@@ -19,13 +19,15 @@ export default {
         };
     },
     methods: {
+        // 入力した値をconnectCable介して送信、Rails側の対応のチャンネル先で保存する
         async handleSubmit() {
             if (!this.message.trim()) {
                 console.warn('空のメッセージは送信できません');
                 return;
             }
             try {
-                this.$emit('connectCable', { message: this.message.trim() }); // オブジェクトで送信
+                // message の text のみ送信
+                this.$emit('connectCable',this.message.trim()); // 直接テキストを送信
                 this.message = ''; // 入力フォームをリセット
             } catch (error) {
                 console.error('メッセージ送信に失敗しました：', error);
@@ -46,10 +48,11 @@ form {
 
 textarea {
     flex-grow: 1; /* 横幅を最大限広げる */
-    width: 150%;  /* 念のため明示 */
+    width: 100%;  /* width: 150% を修正 */
+    max-width: 600px; /* 最大幅を制限 */
     margin-bottom: 6px;
     padding: 10px;
-    box-sizing: auto;
+    box-sizing: border-box; /* box-sizing を修正 */
     border: 2px solid #677bb4;
     border-radius: 5px;
     font-family: inherit;
