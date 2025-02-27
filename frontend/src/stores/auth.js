@@ -47,6 +47,7 @@ export const useAuthStore = defineStore('auth', () => {
             user.value = response.data.data;
             isAuthenticated.value = true;
 
+            // ログインしたユーザーの uid を取得
             const authHeaders = {
                 'access-token': response.headers['access-token'],
                 'client': response.headers['client'],
@@ -54,8 +55,12 @@ export const useAuthStore = defineStore('auth', () => {
                 'expiry': response.headers['expiry'],
                 'token-type': response.headers['token-type']
             };
-            localStorage.setItem('authHeaders', JSON.stringify(authHeaders));
 
+
+            // user.value に uid を格納
+            user.value.uid = authHeaders.uid;
+
+            localStorage.setItem('authHeaders', JSON.stringify(authHeaders));
             // **ユーザー情報取得**
             await fetchUser();
 
@@ -136,6 +141,9 @@ export const useAuthStore = defineStore('auth', () => {
             const response = await axios.get(`${API_URL}/validate_token`, { headers });
             user.value = response.data.data;
             isAuthenticated.value = true;
+
+            // ユーザー情報に uid を格納
+            user.value.uid = response.data.data.uid;
         } catch (error) {
             console.error('ユーザー情報取得失敗:', error.response?.data || error.message);
             await useAuthStore().logout();

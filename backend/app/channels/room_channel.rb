@@ -25,6 +25,7 @@ class RoomChannel < ApplicationCable::Channel
         id: message.id,
         user_id: message.user.id,
         name: message.user.name,
+        nickname: message.user.nickname,
         content: message.content,
         created_at: message.created_at,
         email: message.user.email

@@ -3,6 +3,9 @@ class MessagesController < ApplicationController
     #before_action :authenticate_user!, only: ["index"]
 
     def index
+        # ヘッダーのログ出力
+        Rails.logger.debug("受信したヘッダー: #{request.headers.inspect}")
+
         messages = Message.includes(:user, likes: :user).all
         messages_array = messages.map do |message|
             {
@@ -11,6 +14,7 @@ class MessagesController < ApplicationController
                 name: message.user.name,
                 content: message.content,
                 email: message.user.email,
+                nickname: message.user.nickname,
                 created_at: message.created_at,
                 likes: message.likes.map{
                     |like| {

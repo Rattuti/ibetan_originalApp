@@ -49,7 +49,7 @@ form {
 textarea {
     flex-grow: 1; /* 横幅を最大限広げる */
     width: 100%;  /* width: 150% を修正 */
-    max-width: 600px; /* 最大幅を制限 */
+    max-width: 1200px; /* 最大幅を制限 */
     margin-bottom: 6px;
     padding: 10px;
     box-sizing: border-box; /* box-sizing を修正 */

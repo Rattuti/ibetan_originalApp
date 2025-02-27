@@ -6,11 +6,11 @@ import VueTailwindDatepicker from 'vue-tailwind-datepicker'
 
 import './assets/style.css'
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faTag, faHeart } from '@fortawesome/free-solid-svg-icons';
+import { faTag, faHeart, faSmile, faStar, faThumbsUp } from '@fortawesome/free-solid-svg-icons';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
-library.add(faTag, faHeart);
+library.add(faTag, faHeart, faSmile, faStar, faThumbsUp);
 
 const app = createApp(App)
 app.use(createPinia())// piniaを使う設定

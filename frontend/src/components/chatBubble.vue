@@ -1,37 +1,23 @@
 <template>
     <div class="chat-bubble">
         <div v-show="messages" class="messages" ref="messages">
-        <ul>
-            <li 
-            v-for="message in messages" 
-            :key="message.id"
-            :class="{
-                received: message.email !== uid,
-                sent: message.email === uid
-            }"
-            >
-            <span class="name">{{ message.name }}</span>
-            <div
-                class="message"
-                @click="handleLike(message)"
-                :aria-label="`メッセージ内容：${message.content}`"
-            >
-                {{ message.content }}
-                <div v-if="message.likes && message.likes.length" class="heart-container">
-                <font-awesome-icon
-                    icon="heart"
-                    class="heart"
-                    aria-label="いいねアイコン"
-                    role="button"
-                    tabindex="0"
-                    @click.stop="handleLike(message)"
-                />
-                <span class="heart-count">{{ message.likes.length }}</span>
-                </div>
-            </div>
-            <span class="created-at">{{ message.created_at }}前</span>
-            </li>
-        </ul>
+            <ul>
+                <li v-for="message in messages" :key="message.id" :class="{
+                    received: message.email !== uid, // 受信者のメッセージ
+                    sent: message.email === uid     // 送信者のメッセージ
+                }" >
+                    <span class="name">{{ message.nickname ? message.nickname : message.name }}</span>
+                    <div class="message" @click="handleLike(message)" :aria-label="`メッセージ内容：${message.content}`">
+                        {{ message.content }}
+                        <div v-if="message.likes && message.likes.length" class="heart-container">
+                            <font-awesome-icon icon="heart" class="heart" aria-label="いいねアイコン" role="button" tabindex="0"
+                                @click.stop="handleLike(message)" />
+                            <span class="heart-count">{{ message.likes.length }}</span>
+                        </div>
+                    </div>
+                    <span class="created-at">{{ message.created_at }}前</span>
+                </li>
+            </ul>
         </div>
     </div>
 </template>
@@ -44,9 +30,9 @@ import { nextTick } from 'vue';
 export default {
     emits: ['connectCable'],
     props: {
-        messages:{
+        messages: {
             type: Array,
-            default: () =>[] //空配列をデフォルトに
+            default: () => [] //空配列をデフォルトに
         }
     },
     data() {
@@ -56,23 +42,32 @@ export default {
     },
     computed: {
         uid() {
-            console.log("現在のuid",this.authStore.uid);
-            return this.authStore.uid;  // Piniaストアからuidを取得
+            console.log("this.authStore.uid:", this.authStore.user.uid);
+            return this.authStore.user.uid;
         },
         authHeaders() {
-            return {
-                uid: this.uid || '',
-                'access-token': localStorage.getItem('access-token') ?? '',
-                client: localStorage.getItem('client') ?? '',
+            const headers = {
+                uid: localStorage.getItem("uid") ?? "",
+                "access-token": localStorage.getItem("access-token") ?? "",
+                client: localStorage.getItem("client") ?? "",
             };
-        },
+            console.log("送信するヘッダー:", headers);
+            return headers;
+        }
     },
     methods: {
         async handleLike(message) {
-            if(!message.liikes) return;
-            const like = message.likes.find(like => like.email === this.uid);
-            like ? await this.deleteLike(message.id, like.id) : await this.createLike(message.id);
+            if (!message.likes) return;
+
+            const like = message.likes.find(like => like.user_id === this.uid);
+
+            if (like) {
+                await this.deleteLike(message.id, like.id);
+            } else {
+                await this.createLike(message.id);
+            }
         },
+
         async createLike(messageId) {
             await this.sendLikeRequest(
                 `http://localhost:3000/messages/${messageId}/likes`,
@@ -87,45 +82,59 @@ export default {
         },
         async sendLikeRequest(url, method, data = {}) {
             try {
+                const headers = {
+                    ...this.authHeaders(),
+                    "Content-Type": "application/json"
+                };
+
+                console.log("送信するURL:", url);
+                console.log("送信するデータ:", data);
+                console.log("送信するヘッダー:", headers);
+
                 const res = await axios({
-                url,
-                method,
-                headers: this.authHeaders,
-                data
+                    url,
+                    method,
+                    headers,
+                    data
                 });
                 if (res.status === 200 || res.status === 201) {
-                this.$emit('connectCable');
+                    this.$emit('connectCable');
                 } else {
-                throw new Error('リクエストに失敗しました');
+                    throw new Error('リクエストに失敗しました');
                 }
             } catch (error) {
                 console.error(error.message);
             }
         },
+        logMessageInfo(message) {
+            console.log(`message.email: ${message.email}, uid: ${this.uid}`);
+        },
+
         scrollToBottom() {
-        const element = this.$refs.messages;
-        if (element) {
-            element.scrollTop = element.scrollHeight;
-        } else {
-            console.warn('scrollToBottom: messages ref is not available');
-        }
+            const element = this.$refs.messages;
+            if (element) {
+                element.scrollTop = element.scrollHeight;
+            } else {
+                console.warn('scrollToBottom: messages ref is not available');
+            }
         },
     },
     mounted() {
         nextTick(() => {
-        this.scrollToBottom();
+            // UIDがセットされた後でスクロールをする
+            this.scrollToBottom();
         });
     },
     watch: {
-        messages: {
-            handler(newMessages) {
-                console.log("chatBubble.vueでmessagesが更新されました", newMessages);
-                newMessages.forEach(msg => console.log("message.content:", msg.content));
-                this.$nextTick(() => {
-                    this.scrollToBottom();
-                });
+        'authStore.uid': {
+            handler(newUid) {
+                if (newUid) {
+                    this.$nextTick(() => {
+                        this.scrollToBottom();
+                    });
+                }
             },
-            deep: true
+            immediate: true
         }
     }
 };
@@ -149,6 +158,16 @@ ul li {
     clear: both;
 }
 
+.received .message {
+    background: #eee;
+    /* 受信者のメッセージの色 */
+    padding: 10px;
+    display: inline-block;
+    border-radius: 30px;
+    margin-bottom: 2px;
+    max-width: 400px;
+}
+
 .received {
     float: left;
 }
@@ -157,25 +176,25 @@ ul li {
     float: right;
 }
 
-.message {
+.sent .message {
+    background: #677bb4;
+    /* 送信者のメッセージの色 */
+    color: white;
     padding: 10px;
+    display: inline-block;
     border-radius: 30px;
     margin-bottom: 2px;
     max-width: 400px;
-    display: inline-block;
 }
 
-.received .message {
-    background: #eee;
-}
-
-.sent .message {
-    background: #677bb4;
-    color: white;
+.messages {
+    max-height: 400px;
+    overflow: auto;
 }
 
 .name {
     font-size: 13px;
+    font-weight: bold;
 }
 
 .created-at {
@@ -205,5 +224,4 @@ ul li {
 .heart {
     cursor: pointer;
 }
-
 </style>
