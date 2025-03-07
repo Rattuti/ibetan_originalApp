@@ -2,18 +2,22 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import axios from 'axios'
 
+// クッキーを含めたリクエストを送る設定
 axios.defaults.withCredentials = true;
 
 const API_URL = 'http://localhost:3000/auth'
 
 export const useAuthStore = defineStore('auth', () => {
-    const user = ref(null);
-    const isAuthenticated = ref(false);
+    const user = ref(null); // ユーザー情報を格納
+    const isAuthenticated = ref(false); // 認証状態を管理
 
+    
+    // 認証ヘッダーを取得する関数
+    // ローカルストレージから取得し、正しいフォーマットのオブジェクトを返す
     const getAuthHeaders = () => {
         const authHeaders = JSON.parse(localStorage.getItem("authHeaders"));
         
-        // authHeaders が存在し、必要なプロパティが全て揃っているかチェック
+        // 認証ヘッダーが存在し、必要なキーが揃っているかチェック
         if (!authHeaders || !authHeaders["access-token"] || !authHeaders["client"] || !authHeaders["uid"]) {
             console.warn("認証ヘッダーが無効:", authHeaders);
             return null;
@@ -32,13 +36,12 @@ export const useAuthStore = defineStore('auth', () => {
 
 
     // ログイン処理
+    // email と password を使ってログインし、トークンを保存
     const login = async (email, password) => {
         try {
             const response = await axios.post(`${API_URL}/sign_in`, {
                 email,
                 password
-            }, {
-                withCredentials: true  // Cookie 付きリクエスト
             });
 
             console.log("レスポンスヘッダー:", response.headers); 
@@ -56,12 +59,13 @@ export const useAuthStore = defineStore('auth', () => {
                 'token-type': response.headers['token-type']
             };
 
-
-            // user.value に uid を格納
-            user.value.uid = authHeaders.uid;
-
+            // ローカルストレージに保存
+            // localStorage.setItem(key, value)
+            // ブラウザのローカルストレージ にデータを保存するメソッド
+            // ローカルストレージは文字列しか保存できないので、JSON.stringify() を使いオブジェクトを JSON 形式の文字列 に変換
             localStorage.setItem('authHeaders', JSON.stringify(authHeaders));
-            // **ユーザー情報取得**
+
+            // ユーザー情報取得
             await fetchUser();
 
             return response.data;
@@ -72,6 +76,7 @@ export const useAuthStore = defineStore('auth', () => {
     };
 
     // 新規登録処理
+    // name, email, password を使ってユーザー登録
     const signUp = async (name, email, password) => {
         try {
             const requestData = {
@@ -91,6 +96,7 @@ export const useAuthStore = defineStore('auth', () => {
             user.value = response.data.data;
             isAuthenticated.value = true;
 
+            // レスポンスヘッダーから認証トークンを取得し、ローカルストレージに保存
             const authHeaders = {
                 'access-token': response.headers['access-token'],
                 'client': response.headers['client'],
@@ -107,6 +113,7 @@ export const useAuthStore = defineStore('auth', () => {
     };
 
     // ログアウト処理
+    // サーバーへログアウトリクエストを送り、ローカルストレージをクリア
     const logout = async () => {
         const headers = getAuthHeaders();
         if (!headers) {
@@ -129,6 +136,7 @@ export const useAuthStore = defineStore('auth', () => {
     };
 
     // ユーザー情報取得
+    // 認証トークンを使ってログイン状態を確認
     const fetchUser = async () => {
         const headers = getAuthHeaders();
         if (!headers) {

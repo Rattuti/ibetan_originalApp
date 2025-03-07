@@ -12,27 +12,28 @@
 
 <script>
 export default {
-    emits: ['connectCable'],
+    emits: ['connectCable'], // 親コンポーネントにメッセージ送信イベントを通知
     data() {
         return {
-            message: ''
+            message: ''// 入力メッセージのデータバインディング
         };
     },
     methods: {
         // 入力した値をconnectCable介して送信、Rails側の対応のチャンネル先で保存する
         async handleSubmit() {
-            if (!this.message.trim()) {
+            if (!this.message.trim()) {// 空メッセージの送信を防止
                 console.warn('空のメッセージは送信できません');
                 return;
             }
             try {
                 // message の text のみ送信
-                this.$emit('connectCable',this.message.trim()); // 直接テキストを送信
+                this.$emit('connectCable',this.message.trim());  // 親コンポーネントへ送信イベントを発火
                 this.message = ''; // 入力フォームをリセット
             } catch (error) {
                 console.error('メッセージ送信に失敗しました：', error);
             }
         },
+        // Shift + Enter で改行を挿入するメソッド
         insertNewLine() {
             this.message += '\n';
         }

@@ -19,7 +19,10 @@ class MessagesController < ApplicationController
                 likes: message.likes.map{
                     |like| {
                         id: like.id,
-                        email: like.user.email
+                        email: like.user.email,
+                        uid:like.user.email,
+                        click: like.click, # いいねの状態を含める
+                        mark_type: like.mark_type # いいねの種類も返
                     }
                 }
             }
@@ -45,4 +48,41 @@ class MessagesController < ApplicationController
         end
     end
 
-end
+    def toggle_like
+        # messageの検索
+        message = Message.find_by(id: params[:message_id])
+        return render json: { success: false, error: "Message not found" }, status: :not_found if message.nil?
+    
+        # uidの取得
+        uid = params[:uid]
+        return render json: { success: false, error: "User not found" }, status: :unauthorized if uid.nil?
+    
+        # Likeの検索または初期化
+        like = Like.find_or_initialize_by(message_id: message.id, uid: uid)
+    
+        # 既存のLikeがあれば状態を切り替え、なければ新規作成
+        if like.new_record?
+            like.assign_attributes(click: 1, mark_type: params[:mark_type], uid: uid) # 初回はいいねを1にする
+        else
+            like.click = like.click == 1 ? 0 : 1 # クリックの切り替え
+            like.mark_type = params[:mark_type] if params[:mark_type].present? # mark_type が空なら更新しない
+        end
+    
+        if like.save
+            ActionCable.server.broadcast "message_#{message.id}", {
+                message_id: message.id,
+                liked: like.click == 1,
+                mark_type: like.mark_type
+            }
+            render json: { 
+                message_id: message.id, 
+                click: like.click, 
+                mark_type: like.mark_type, 
+                uid: like.uid,
+                likes: message.likes.select(:id, :uid, :click, :mark_type) # フロントで更新しやすくするため
+            }
+        else
+            render json: { errors: like.errors.full_messages }, status: :unprocessable_entity
+        end
+    end
+end    

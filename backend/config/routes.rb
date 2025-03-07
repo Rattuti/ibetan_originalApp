@@ -25,6 +25,9 @@ Rails.application.routes.draw do
   end
 
     resources :messages, only: [:index, :create] do
-      resources :likes, only: [:create, :destroy]
+      resource :like, only: [:create, :destroy] do# いいね機能 
+        post :toggle, on: :collection   # collection に変更（idを使わない）
+      end
     end
+
 end

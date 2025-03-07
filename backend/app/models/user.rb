@@ -36,7 +36,7 @@ end
   has_many :articles
   has_many :events, dependent: :destroy
   has_many :favorites
-  has_many :messages
+  has_many :messages, dependent: :destroy
   has_many :likes, dependent: :destroy
   has_many :contacts, dependent: :destroy
 
@@ -47,6 +47,7 @@ end
   # コールバック（最後に記述）
   after_initialize :set_default_role, if: :new_record?
 
+  
   private
 
   def set_default_role

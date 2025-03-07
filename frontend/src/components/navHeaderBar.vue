@@ -29,17 +29,19 @@ export default {
     setup() {
         const router = useRouter();
         const authStore = useAuthStore(); // 認証ストアを利用
-        const error = ref(null);
+        const error = ref(null);// エラーメッセージの管理
 
         // ユーザー情報をcomputedでリアクティブに取得
         const user = computed(() => authStore.user);
+
+        // ユーザーの表示名を決定（ニックネーム優先、なければ名前、どちらもなければ「ゲスト」）
         const displayName = computed(() => user.value?.nickname || user.value?.name || "ゲスト");
 
         // コンポーネントがマウントされたらユーザー情報を取得
         onMounted(async () => {
             if (!user.value) {
                 try {
-                    await authStore.fetchUser();
+                    await authStore.fetchUser();// ユーザー情報を取得
                 } catch (err) {
                     console.error("ユーザー情報の取得に失敗しました:", err);
                     error.value = "ユーザー情報の取得に失敗しました。";
@@ -47,14 +49,17 @@ export default {
             }
         });
 
+        // ホーム画面へ遷移
         const goToHome = () => {
             router.push("/ChatRoom");
         };
 
+        // マイページへ遷移
         const goToMyPage = () => {
             router.push("/UserMyPage");
         };
 
+        // ログアウト処理
         const logout = async () => {
             error.value = null;
             try {

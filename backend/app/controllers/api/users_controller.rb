@@ -2,18 +2,11 @@ class Api::UsersController < ApplicationController
     before_action :set_user, only: [:update]
 
     def update
-    if params[:avatar].present?
-        uploaded_file = params[:avatar]
-        filename = "#{SecureRandom.hex}_#{uploaded_file.original_filename}"
-        filepath = Rails.root.join("public/uploads", filename)
-
-        # 画像をサーバーに保存
-        File.open(filepath, "wb") do |file|
-            file.write(uploaded_file.read)
-        end
-
-        # DB に画像のURLを保存（`/uploads/filename.png`）
-        @user.update(avatar: "/uploads/#{filename}")
+        if current_user.update(avatar_params)
+            render json:{avatar:url_for(current_user.avatar)},status: :ok
+        else
+            render json:{error: "Failed to update avatar"},status: :unprocessable_entity
+        end    
     end
 
     if params[:nickname].present?
@@ -23,9 +16,18 @@ class Api::UsersController < ApplicationController
         render json: @user
     end
 
+    def show
+        render json:{user:current_user, avatar: url_for(current_user.avatar)}
+    end
+
+
     private
 
     def set_user
         @user = User.find_by(id: params[:id])
+    end
+
+    def avatar_params
+        params.require(:user).permit(:avatar)
     end
 end

@@ -64,10 +64,15 @@ import { ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import axios from "axios";
 
+// Vue Router のルート情報を取得
 const route = useRoute();
 const router = useRouter();
+
+// イベントデータ
 const event = ref(null);
+// 関連する記事データ
 const article = ref(null);
+// 編集可能かどうかのフラグ
 const isEditable = ref(false);
 
 // 編集可能かどうか判定する computed プロパティ
@@ -95,7 +100,7 @@ const fetchEventDetail = async () => {
     }
 };
 
-// 削除
+// イベント削除
 const deleteEvent = async () => {
     if (!isEditable.value) {
         return alert("スクレイピング情報は削除できません！");
@@ -113,7 +118,7 @@ const deleteEvent = async () => {
     }
 };
 
-// 更新
+// イベント更新
 const updateEvent = async () => {
     if (!isEditable.value) {
         return alert("編集できません！");
