@@ -85,7 +85,10 @@ actionsの「edit」を押すと、編集画面に切り替わり、名前と権
 ![image](https://github.com/user-attachments/assets/ca7c61cf-a38d-4342-ac41-b6f39dc3e3d6)
 
 ## インフラ構成図
-　作成中
+### ユーザ登録情報の流れ
+![image](https://github.com/user-attachments/assets/b46cb28c-f14e-42dd-b491-4c35c0fcd952)
+
+
 
 ## 🖥️使用言語
 ##### フロントエンド  
