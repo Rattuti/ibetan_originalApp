@@ -7,13 +7,14 @@
         <!-- プロフィール部分 -->
         <div class="profile-section">
           <label class="profile-label">
-            <div v-if="user.avatar" class="avatar-container">
+            <div v-if="user.avatar && user.avatar !== ''" class="avatar-container">
               <img v-if="user.avatar" :src="user.avatar" alt="プロフィール画像" class="avatar" />
             </div>
             <div v-else class="avatar-placeholder">画像未設定</div>
-            <input type="file" @change="onFileChange" class="file-input" id="file" />
-            <label for="file" class="custom-file-label">画像を選択</label>
+              <input type="file" @change="onFileChange" class="file-input" id="file" />
+              <label for="file" class="custom-file-label">画像を選択</label>
           </label>
+
           <div class="info-container">
             <label>
               ニックネーム:
@@ -26,6 +27,7 @@
               <button @click="goToProfile">プロフィール編集</button>
             </div>
           </div>
+
         </div>
       </div>
 
@@ -62,38 +64,21 @@ export default {
     const getAuthHeaders = authStore.getAuthHeaders;
     const router = useRouter();
 
-    // ユーザーのファイルとニックネーム
-    const avatarFile = ref(null);  // アバター画像ファイルを格納
-
     // ローカルストレージからユーザー情報を読み込む
     onMounted(() => {
       const savedUser = localStorage.getItem("user");
       if (savedUser) {
-        const parsedUser = JSON.parse(savedUser);
-        user.value.id = parsedUser.id;
-        user.value.name = parsedUser.name;
-        user.value.email = parsedUser.email;
-        user.value.nickname = parsedUser.nickname;
-        user.value.avatar = parsedUser.avatar;
+        authStore.user = JSON.parse(savedUser); // Pinia の user を更新
+        user.value = { ...authStore.user }; // user も更新
       } else {
         alert("ユーザー情報がありません。再度ログインしてください。");
       }
     });
 
-    // ファイル選択時の処理
-    const onFileChange = (event) => {
-      const file = event.target.files[0];
-      if (file) {
-        avatarFile.value = file; // 選択されたファイルを保存
-        user.value.avatar = URL.createObjectURL(file); // プレビュー用
-        saveAvatar(file); // API にアップロード
-      }
-    };
-
     // ユーザー情報を更新
     const saveChanges = () => {
       axios
-        .put(`http://localhost:3000/api/users/${user.value.id}`, { nickname: user.value.nickname }, {
+        .patch(`http://localhost:3000/api/users/${user.value.id}`, { nickname: user.value.nickname }, {
           headers: getAuthHeaders(),
         })
         .then((response) => {
@@ -107,7 +92,7 @@ export default {
           user.value.avatar = updatedUser.avatar;
 
           // ローカルストレージに保存
-          localStorage.setItem("user", JSON.stringify(user));
+          localStorage.setItem("user", JSON.stringify(user.value));
           alert("変更が保存されました！");
         })
         .catch((error) => {
@@ -116,27 +101,26 @@ export default {
         });
     };
 
-    // アバター画像を保存
-    const saveAvatar = (file) => {
-      const userId = user.value.id;
+    // アバター画像をアップロード
+    const onFileChange = async (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+
       const formData = new FormData();
       formData.append("avatar", file);
 
-      axios
-        .put(`http://localhost:3000/api/users/${userId}`, formData, {
-          headers: {
-            ...getAuthHeaders(),
-            "Content-Type": "multipart/form-data",
-          },
-        })
-        .then((response) => {
-          user.value.avatar = response.data.avatar; // URLをセット
-          localStorage.setItem("user", JSON.stringify(user.value));
-          alert("アバターが更新されました！");
-        })
-        .catch((error) => {
-          console.error("アバターのアップロードに失敗:", error);
-        });
+      try {
+        const response = await axios.patch(
+          `http://localhost:3000/api/users/${user.value.id}`,
+          formData,
+          { headers: { ...getAuthHeaders(), "Content-Type": "multipart/form-data" } }
+        );
+        user.value.avatar = response.data.avatar; // サーバーから返された画像URLを反映
+        localStorage.setItem("user", JSON.stringify(user.value));
+        alert("アバターが更新されました！");
+      } catch (error) {
+        console.error("アバターのアップロードに失敗:", error);
+      }
     };
 
 
@@ -149,7 +133,6 @@ export default {
       user,
       onFileChange,
       saveChanges,
-      saveAvatar,  // saveAvatarをsetup()内で利用できるように
       goToProfile,
     };
   },
@@ -158,6 +141,11 @@ export default {
 
 
 <style>
+navHeaderBar, navFooterBar {
+    margin: 0;
+    padding: 0;
+}
+
 .button-container {
   display: flex;
   gap: 20px; /* ボタン間の間隔 */

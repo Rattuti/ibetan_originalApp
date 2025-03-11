@@ -6,6 +6,7 @@ module ApplicationCable
       self.current_user = find_verified_user
       reject_unauthorized_connection unless current_user
       logger.add_tags 'ActionCable', current_user.email
+      logger.add_tags "ActionCable", "User #{current_user.id}"
     end
 
     private

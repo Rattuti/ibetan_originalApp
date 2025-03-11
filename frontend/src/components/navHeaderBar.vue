@@ -11,7 +11,11 @@
             <p class="email">現在、 {{ user?.email }} でログイン中です</p>
             <div class="error">{{ error }}</div>
         </div>
+
         <div class="button-container">
+            <div>
+                <button v-if="user && user.role === 'admin'" @click="goToAdmin">管理者画面</button>
+            </div>
             <button @click="goToHome">ホーム</button>
             <button @click="goToMyPage">マイページ</button>
             <button @click="logout">ログアウト</button>
@@ -49,6 +53,12 @@ export default {
             }
         });
 
+        // 管理者画面へ遷移
+        const goToAdmin = () => {
+            router.push("/Admin");
+        };
+
+
         // ホーム画面へ遷移
         const goToHome = () => {
             router.push("/ChatRoom");
@@ -78,6 +88,7 @@ export default {
             goToHome,
             goToMyPage,
             logout,
+            goToAdmin,
         };
     },
 };
@@ -90,6 +101,7 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-color: white;
 }
 
 nav p {

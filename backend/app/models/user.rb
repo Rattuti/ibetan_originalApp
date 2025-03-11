@@ -9,7 +9,8 @@ class User < ActiveRecord::Base
           :recoverable, :validatable
 
   # バリデーション（Devise の設定後に記述）
-  validates_uniqueness_of :email, case_sensitive: false
+  validates :name, presence: true, length: { maximum: 30 }
+  validates :email, uniqueness: { case_sensitive: false }
 
   # Enum（定数的な役割なのでバリデーションの後）
   enum role: { user: "user", admin: "admin" }
@@ -40,14 +41,13 @@ end
   has_many :likes, dependent: :destroy
   has_many :contacts, dependent: :destroy
 
-
   validates :name, presence: true
   validates :name, length: { maximum: 30 }
 
   # コールバック（最後に記述）
   after_initialize :set_default_role, if: :new_record?
 
-  
+
   private
 
   def set_default_role

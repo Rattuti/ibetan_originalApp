@@ -42,7 +42,6 @@
 <script>
 import { createConsumer } from "@rails/actioncable";
 import { useAuthStore } from "@/stores/auth";
-
 import axios from "axios";
 
 export default {
@@ -133,8 +132,9 @@ export default {
                         article_id: item.article_id,
                         click: clickValue
                     }
-                }, { headers: headers }
-                );
+                }, { headers: headers })
+                .then(response => console.log("APIレスポンス:", response.data))
+                .catch(error => console.error("エラー:", error.response?.data || error));
 
                 console.log("APIレスポンス:", response.data);
 

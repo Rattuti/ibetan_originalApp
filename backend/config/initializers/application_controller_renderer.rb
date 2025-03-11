@@ -1,8 +1,5 @@
-# Be sure to restart your server when you modify this file.
+class ApplicationController < ActionController::API
+    include DeviseTokenAuth::Concerns::SetUserByToken
 
-# ActiveSupport::Reloader.to_prepare do
-#   ApplicationController.renderer.defaults.merge!(
-#     http_host: 'example.org',
-#     https: false
-#   )
-# end
+    before_action :authenticate_user!
+end

@@ -55,6 +55,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
+import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import moment from "moment";
@@ -67,12 +68,17 @@ const isToday = (date) => {
     return date.isSame(moment(), "day");
 };
 
+
+
+const authStore = useAuthStore();
+const headers = authStore.getAuthHeaders();
+
 // API からデータ取得
 const fetchEvents = async () => {
     try {
         const [scrapingData, eventData] = await Promise.all([
-            axios.get("http://localhost:3000/api/scraping"),
-            axios.get("http://localhost:3000/api/events")
+            axios.get("http://localhost:3000/api/scraping",{headers}),
+            axios.get("http://localhost:3000/api/events",{headers})
         ]);
 
         events.value = [

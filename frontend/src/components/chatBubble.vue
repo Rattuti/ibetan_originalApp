@@ -1,16 +1,20 @@
 <template>
-    <div class="chat-bubble">
-        <div v-show="messages" class="messages" ref="messages">
-            <ul>
-                <li v-for="message in messages" :key="message.id" :class="{
-                    received: message.email !== uid, // 受信者のメッセージ
-                    sent: message.email === uid     // 送信者のメッセージ
-                }">
+    <ul>
+        <li v-for="message in messages" :key="message.id" :class="{
+            received: message.email !== uid,
+            sent: message.email === uid
+        }">
+            <div class="message-container">
+                <img
+                    :src="getUserById(message.user_id)?.avatar_url"
+                    alt="Avatar"
+                    class="avatar"
+                />
+                <div class="message-content">
                     <span class="name">{{ message.nickname ? message.nickname : message.name }}</span>
                     <div class="message" @dblclick="handleLike(message)" :aria-label="`メッセージ内容：${message.content}`">
                         {{ message.content }}
-
-                        <!-- ユーザーが1回クリックした場合にマークを選べるようにする -->
+                        
                         <select
                             v-if="message.likes && Array.isArray(message.likes) && message.likes.some(like => like.uid === uid && like.click === 1)"
                             v-model="selectedMark[message.id]" 
@@ -20,20 +24,18 @@
                             <option value="thumbs-up">👍</option>
                         </select>
 
-                        <!-- ここでマークを表示 -->
                         <span
                             v-if="selectedMark[message.id] && message.likes.find(like => like.uid === uid)?.click === 2">
                             <span v-if="selectedMark[message.id] === 'heart'">❤️</span>
                             <span v-if="selectedMark[message.id] === 'star'">⭐</span>
                             <span v-if="selectedMark[message.id] === 'thumbs-up'">👍</span>
                         </span>
-
                     </div>
                     <span class="created-at">{{ message.created_at }}前</span>
-                </li>
-            </ul>
-        </div>
-    </div>
+                </div>
+            </div>
+        </li>
+    </ul>
 </template>
 
 <script>
@@ -53,6 +55,12 @@ export default {
         const uid = computed(() => authStore.user?.uid);
         const cable = ref(null);
         const selectedMark = ref({}); // selectedMark を ref に変更
+
+        // 現在のユーザー情報を取得
+        const getUserById = (userId) => {
+        // ユーザーIDが現在のログインユーザーIDと一致する場合、そのユーザー情報を返す
+            return authStore.user && authStore.user.id === userId ? authStore.user : null;
+        };
 
         // メッセージごとのマークを初期化
         const initSelectedMark = () => {
@@ -240,6 +248,7 @@ export default {
 
         return {
             uid,
+            getUserById,
             selectedMark,
             handleLike,
             updateMarkType
@@ -252,7 +261,7 @@ export default {
 <style scoped>
 /* チャットメッセージのデザイン */
 .chat-bubble {
-    background: white;
+    background-color: white;
     padding: 30px 20px;
     border-bottom: 1px solid #eee;
 }
@@ -341,4 +350,21 @@ select {
     border-radius: 5px;
     font-size: 12px;
 }
+.message-container {
+    display: flex;
+    align-items: center;
+}
+
+.avatar {
+    width: 40px; /* アバター画像のサイズ */
+    height: 40px;
+    border-radius: 50%; /* 丸いアイコン */
+    margin-right: 10px; /* メッセージとの間隔 */
+}
+
+.message-content {
+    display: flex;
+    flex-direction: column;
+}
+
 </style>

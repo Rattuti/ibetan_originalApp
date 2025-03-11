@@ -36,6 +36,7 @@ import navHeaderBar from '../components/navHeaderBar';
 import navFooterBar from '../components/navFooterBar';
 
 import { ref } from "vue";
+import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
 import axios from "axios";
 
@@ -53,16 +54,22 @@ const newEvent = ref({
 
 // イベント作成の関数
 const createEvent = async () => {
+    const authStore = useAuthStore(); // Pinia ストアを取得
+    const headers = authStore.getAuthHeaders(); // getAuthHeaders を取得
     try {
-        await axios.post('http://localhost:3000/api/events', {
-            user_id: newEvent.value.user_id,
-            title: newEvent.value.title,
-            start_date: newEvent.value.start_date,
-            end_date: newEvent.value.start_date,
-            color: newEvent.value.color,
-            content: newEvent.value.content,
-            judge: true,
-        });
+        await axios.post(
+            'http://localhost:3000/api/events', 
+            {
+                user_id: newEvent.value.user_id,
+                title: newEvent.value.title,
+                start_date: newEvent.value.start_date,
+                end_date: newEvent.value.start_date,
+                color: newEvent.value.color,
+                content: newEvent.value.content,
+                judge: true,           
+            },
+            { headers }
+        );
 
         alert('イベントが作成されました');
         router.push("/chatRoom");  // 作成後、ChatRoomページに遷移

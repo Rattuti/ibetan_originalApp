@@ -1,46 +1,63 @@
 <template>
-    <div class="contact-page">
-      <form @submit.prevent="handleSubmit">
-        <div class="form-group">
-          <label for="message">お問い合わせ内容</label>
-          <textarea id="message" v-model="form.message" placeholder="お問い合わせ内容を入力してください" rows="5" required></textarea>
-        </div>
-  
-        <button type="submit">送信</button>
-      </form>
-    </div>
-  </template>
-  
-  <script>
-  export default {
-    name: "ContactPage",
-    data() {
-      return {
-        form: {
-          name: localStorage.getItem("userName") || "", // ローカルストレージから取得
-          email: localStorage.getItem("userEmail") || "", // ローカルストレージから取得 
-          message: "",
-        },
-      };
-    },
-    methods: {
-      handleSubmit() {
-        // フォーム送信処理
-        if (this.form.name && this.form.email && this.form.message) {
-          alert("お問い合わせありがとうございます！");
-          this.resetForm();
-        } else {
-          alert("全てのフィールドを入力してください。");
-        }
-      },
-      resetForm() {
-        this.form.name = "";
-        this.form.email = "";
-        this.form.message = "";
-      },
-    },
-  };
-  </script>
+  <div class="contact-page">
+    <form @submit.prevent="handleSubmit">
+      <div class="form-group">
+        <label for="message">お問い合わせ内容</label>
+        <textarea id="message" v-model="form.message" placeholder="お問い合わせ内容を入力してください" rows="5" required></textarea>
+      </div>
+      <button type="submit">送信</button>
+    </form>
+  </div>
+</template>
+
+<script>
+import { ref } from "vue";
+import axios from "axios";
+import { useAuthStore } from "@/stores/auth";
+
+export default {
+  name: "ContactPage",
+  setup() {
+    const authStore = useAuthStore();
+    const form = ref({
+      name: localStorage.getItem("name") || "",
+      email: localStorage.getItem("email") || "",
+      message: "",
+    });
+
+    const handleSubmit = async () => {
+      if (!form.value.message) {
+        alert("メッセージを入力してください。");
+        return;
+      }
+
+      try {
+        const response = await axios.post(
+          "http://localhost:3000/api/contacts",
+          {
+            contact: { ...form.value } // APIの仕様に合わせて送信
+          },
+          { headers: authStore.getAuthHeaders() }
+        );
+        console.log("送信データ:", form.value);
+        console.log("送信成功:", response.data);
+        alert("お問い合わせありがとうございます！");
+        resetForm();
+      } catch (error) {
+        console.error("送信エラー:", error.response?.data || error);
+        alert("お問い合わせの送信に失敗しました。");
+      }
+    };
+
+    const resetForm = () => {
+      form.value.message = "";
+    };
+
+    return { form, handleSubmit };
+  }
+};
+</script>
+
   
   <style scoped>
 .contact-page {

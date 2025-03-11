@@ -15,12 +15,13 @@ class MessagesController < ApplicationController
                 content: message.content,
                 email: message.user.email,
                 nickname: message.user.nickname,
+                avatar: avatar_url(message.user),
                 created_at: message.created_at,
-                likes: message.likes.map{
-                    |like| {
+                likes: message.likes.map { |like|
+                    {
                         id: like.id,
                         email: like.user.email,
-                        uid:like.user.email,
+                        uid: like.user.email,
                         click: like.click, # いいねの状態を含める
                         mark_type: like.mark_type # いいねの種類も返
                     }
@@ -28,7 +29,6 @@ class MessagesController < ApplicationController
             }
         end
         render json: messages_array, status: :ok
-
     end
 
     def create
@@ -85,4 +85,14 @@ class MessagesController < ApplicationController
             render json: { errors: like.errors.full_messages }, status: :unprocessable_entity
         end
     end
-end    
+
+    private
+
+    def avatar_url(user)
+        if user.avatar.present?
+            "#{request.base_url}/uploads/#{user.avatar}" # 例: public/uploads に保存されている場合
+        else
+            "#{request.base_url}/uploads/default_avatar.png" # デフォルト画像
+        end
+    end
+end

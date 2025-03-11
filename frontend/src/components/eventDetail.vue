@@ -43,7 +43,6 @@
             <p class="mt-2"><strong>詳細:</strong> {{ event.content }}</p>
             <p class="mt-2"><strong>費用:</strong> {{ event.cost ?? "-" }}</p>
             <p class="mt-2"><strong>託児:</strong> {{ event.childcare ?? "-" }}</p>
-            <button @click="goBack" class="mt-4 bg-gray-500 text-white rounded p-2 w-full">戻る</button>           
             <contact v-if="event !== null" />
         </div>
     </div>
@@ -61,12 +60,16 @@ import contact from '../components/contact';
 import navFooterBar from '../components/navFooterBar';
 
 import { ref, onMounted, computed } from "vue";
+import { useAuthStore } from "@/stores/auth";
 import { useRoute, useRouter } from "vue-router";
 import axios from "axios";
 
 // Vue Router のルート情報を取得
 const route = useRoute();
 const router = useRouter();
+
+const authStore = useAuthStore(); // Pinia ストアを取得
+const headers = authStore.getAuthHeaders(); // getAuthHeaders を取得
 
 // イベントデータ
 const event = ref(null);
@@ -88,11 +91,11 @@ const fetchEventDetail = async () => {
     const id = eventId.replace("evt_", "").replace("scr_", "");
 
     try {
-        const response = await axios.get(`http://localhost:3000/api/${isEditable.value ? "events" : "scraping"}/${id}`);
+        const response = await axios.get(`http://localhost:3000/api/${isEditable.value ? "events" : "scraping"}/${id}`,{headers});
         event.value = response.data;
         // 関連する記事情報を取得
         if (event.value.article_id) {
-            const articleResponse = await axios.get(`http://localhost:3000/api/scraping/${event.value.article_id}`);
+            const articleResponse = await axios.get(`http://localhost:3000/api/scraping/${event.value.article_id}`,{headers});
             article.value = articleResponse.data;
         }
     } catch (error) {
@@ -109,7 +112,7 @@ const deleteEvent = async () => {
     const eventId = String(event.value.id).replace("evt_", "");
 
     try {
-        await axios.delete(`http://localhost:3000/api/events/${eventId}`);
+        await axios.delete(`http://localhost:3000/api/events/${eventId}`,{headers});
         alert("削除しました");
         router.push("/ChatRoom");
     } catch (error) {
@@ -127,12 +130,14 @@ const updateEvent = async () => {
     try {
         const eventId = String(event.value.id).replace("evt_", "");
 
-        await axios.put(`http://localhost:3000/api/events/${eventId}`, {
-            title: event.value.name,
-            start_date: event.value.start,
-            end_date: event.value.start,
-            color: event.value.color,
-        });
+        await axios.put(
+            `http://localhost:3000/api/events/${eventId}`, {
+                title: event.value.name,
+                start_date: event.value.start,
+                end_date: event.value.start,
+                color: event.value.color,
+            },{headers}
+        );
 
         alert("更新されました");
         router.push("/ChatRoom");

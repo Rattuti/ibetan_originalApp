@@ -124,6 +124,12 @@ const handleSignUp = async () => {
 </script>
 
 <style scoped>
+h2{
+    color:white;
+}
+.change-form{
+    color:white;
+}
 .btn {
     background-color: #007bff; /* デフォルトの青色 */
     color: white; /* 文字色を白に */

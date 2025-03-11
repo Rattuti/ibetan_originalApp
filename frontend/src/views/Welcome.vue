@@ -17,21 +17,21 @@
 
         <!-- 機能リスト -->
         <div class="features-section">
-            <h2 class="features-title">このアプリでできること</h2>
+            <h2 class="features-title">このアプリで出来る3つのこと</h2>
             <div class="features-list">
                 <div class="feature-item">
-                    <h3 class="feature-title">イベントのタグチェック</h3>
-                    <p class="feature-description">イベントにタグチェックするとマイページでも確認できるよ</p>
+                    <h3 class="feature-title">タグ機能</h3>
+                    <p class="feature-description">タグマークをチェックするとマイページでも確認できるよ。</p>
                 </div>
 
                 <div class="feature-item">
-                    <h3 class="feature-title">ライブチャット機能</h3>
-                    <p class="feature-description">ホーム画面上でリアルタイムにチャットを送れるよ</p>
+                    <h3 class="feature-title">チャット機能</h3>
+                    <p class="feature-description">リアルタイムにチャットを送って、いいねも付けてね。</p>
                 </div>
 
                 <div class="feature-item">
-                    <h3 class="feature-title">マンスリーカレンダー表示</h3>
-                    <p class="feature-description">開催イベントやカレンダーにイベントを追加でき、人目でわかるよ</p>
+                    <h3 class="feature-title">カレンダー機能</h3>
+                    <p class="feature-description">イベントの開催日は自動で表示されるよ。予定は個別に追加できるので使ってみてね。</p>
                 </div>
             </div>
         </div>
@@ -59,7 +59,7 @@ export default {
 <style>
 .welcome {
     text-align: center;
-    padding: 40px 0;
+    padding: 20px 0;
 }
 
 .content-wrapper {
@@ -74,6 +74,7 @@ export default {
 .logo-section {
     width: 45%; /* ロゴを画面の半分に設定 */
     text-align: center;
+    margin-left:20px;
 }
 
 .logo-image {
@@ -89,6 +90,7 @@ export default {
 
 .form-section {
     width: 45%; /* フォームを画面の半分に設定 */
+    margin-right: 20px;;
 }
 
 .change-form {
@@ -125,12 +127,22 @@ export default {
 .welcome button {
     margin: 20px auto;
 }
+.welcome {
+    text-align: center;
+    padding: 20px 0;
+    background-image: url('@/assets/background.jpg');/* 背景画像のパス */
+    background-size: cover; /* 画像を画面いっぱいに表示 */
+    background-position: center; /* 画像を中央配置 */
+    background-repeat: no-repeat; /* 画像の繰り返しを防ぐ */
+    min-height: 100vh; /* 画面全体をカバー */
+}
 .features-section {
     padding: 20px;
     text-align: center;
 }
 
 .features-title {
+    color:white;
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 20px;
@@ -156,11 +168,15 @@ export default {
 .feature-title {
     font-size: 18px;
     font-weight: bold;
+    text-align: center;
     margin-bottom: 10px;
 }
 
 .feature-description {
     font-size: 14px;
     color: #555;
+}
+.subtext {
+    color: white;
 }
 </style>

@@ -11,6 +11,7 @@
 </template>
 
 <script>
+import { useAuthStore } from "@/stores/auth";
 import articleScraping from "../components/articleScraping";
 import axios from "axios";
 
@@ -40,8 +41,11 @@ export default {
   },
   methods: {
     async fetchArticles() {
+      const authStore = useAuthStore(); // Pinia ストアを取得
+      const headers = authStore.getAuthHeaders(); // getAuthHeaders を取得
+
       try {
-        const response = await axios.get("http://localhost:3000/api/scraping");
+        const response = await axios.get("http://localhost:3000/api/scraping",{headers});
         console.log("取得したデータ:", response.data);
 
         if (response.data && Array.isArray(response.data.articles)) {
@@ -72,6 +76,7 @@ export default {
   width: 100%;
   margin: 0 auto;
   font-family: Arial, sans-serif;
+  background-color: white;
 }
 .error {
   color: red;

@@ -12,7 +12,7 @@ Rails.application.routes.draw do
     resources :users, only: [:index, :show, :update, :destroy]
     resources :scraping, only: [:index]
     resources :events, only: [:index, :show, :create, :destroy, :update]
-    resources :contacts, only: [:create]
+    resources :contacts, only: [:index, :show, :create] 
   end  
 
   # 管理者専用エンドポイント

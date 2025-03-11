@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import Admin from '@/views/Admin'
 import Welcome from '@/views/Welcome'
 import ChatRoom from '@/views/ChatRoom'
 import UserMyPage from '@/views/UserMyPage';
@@ -52,6 +53,12 @@ import Policy from '@/views/Policy';
 
 const routes = [
   {
+    path: '/Admin',
+    name: 'Admin',
+    component: Admin,
+    //beforeEnter: noRequireAuth
+  },
+  {
     path: '/',
     name: 'Welcome',
     component: Welcome,
@@ -67,13 +74,13 @@ const routes = [
     path: '/UserMyPage',
     name: 'MyPage',
     component: UserMyPage,
-    //beforeEnter: noRequireAuth
-  },
-  {
-    path: '/UserMpPage/Profile',
-    name: 'Profile',
-    component: Profile,
-    //beforeEnter: noRequireAuth
+    children: [
+      {
+        path: 'Profile',
+        name: 'Profile',
+        component: Profile,
+      }
+    ]
   },
   {
     path: '/event/create',
