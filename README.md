@@ -46,7 +46,7 @@
 ![image](https://github.com/user-attachments/assets/c1b5d98b-5f4c-47ae-82f7-d6f72ee52b91)
 
 ##### ライブメッセージ + いいね機能
-![image](https://github.com/user-attachments/assets/3996dcb2-1417-4c09-9458-65560e9d57b5)
+![image](https://github.com/user-attachments/assets/096d06ad-2313-4f06-ad10-28b236cedc6b)
 
 ##### お問い合わせ機能
 　作成中
