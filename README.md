@@ -23,12 +23,15 @@
 
 ## 使用イメージ
 ##### 新規登録機能
-![image](https://github.com/user-attachments/assets/1c3325ea-61ca-4b9e-b394-0df8736aefb5)
+「名前」「メールアドレス」「パスワード」「パスワード（確認用）」を入力して新規ユーザ登録します。
+![image](https://github.com/user-attachments/assets/b327f1cf-c0b9-4c56-ab6d-04ad672a5ed2)
 
 ##### ログイン機能
-![image](https://github.com/user-attachments/assets/da07fb94-00a8-47fb-9afa-d73636a657f2)
+登録済の場合、「メールアドレス」「パスワード」の入力からログインができます。
+![image](https://github.com/user-attachments/assets/5dab7fc9-ea40-419e-8683-b7ec7d4028e3)
 
 ##### マイページ 
+
 ![image](https://github.com/user-attachments/assets/f478e589-6bc5-4108-995f-50bb3cebdd37)
 
 ##### 管理者権限
