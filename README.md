@@ -59,7 +59,7 @@
 #### カレンダー機能(CRUD)
 講座の開催日が自動でマンスリーカレンダーに表示される。  
 項目を選択すると、講座詳細が表示される。  
-![image](https://github.com/user-attachments/assets/890f9c31-1212-4101-8aab-2b0d0e1c4fa4)
+![image](https://github.com/user-attachments/assets/120563f9-4b37-4f6a-8c8d-ea32abff5752)
 
 カレンダー上のイベントを選択すると、講座の詳細が確認できる。  
 ![image](https://github.com/user-attachments/assets/624b67bd-5f2c-4889-8d3a-1263ee5601bc)
