@@ -29,7 +29,8 @@ class RoomChannel < ApplicationCable::Channel
             nickname: message.user.nickname,
             content: message.content,
             created_at: message.created_at,
-            email: message.user.email
+            email: message.user.email,
+            avatar: message.user.avatar
         }
 
         Rails.logger.debug "🚀 ブロードキャストするデータ: #{broadcast_data}"

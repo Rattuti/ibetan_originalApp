@@ -21,17 +21,20 @@
             <div class="features-list">
                 <div class="feature-item">
                     <h3 class="feature-title">タグ機能</h3>
-                    <p class="feature-description">タグマークをチェックするとマイページでも確認できるよ。</p>
+                    <p class="feature-description">
+                        タグマークをチェックするとマイページでも確認できるよ。</p>
                 </div>
 
                 <div class="feature-item">
                     <h3 class="feature-title">チャット機能</h3>
-                    <p class="feature-description">リアルタイムにチャットを送って、いいねも付けてね。</p>
+                    <p class="feature-description">
+                        リアルタイムにチャットを送って、いいねも付けてね。</p>
                 </div>
 
                 <div class="feature-item">
                     <h3 class="feature-title">カレンダー機能</h3>
-                    <p class="feature-description">イベントの開催日は自動で表示されるよ。予定は個別に追加できるので使ってみてね。</p>
+                    <p class="feature-description">
+                        イベントの開催日は自動で表示されるよ。予定は個別に追加できるので使ってみてね。</p>
                 </div>
             </div>
         </div>
@@ -136,6 +139,7 @@ export default {
     background-repeat: no-repeat; /* 画像の繰り返しを防ぐ */
     min-height: 100vh; /* 画面全体をカバー */
 }
+
 .features-section {
     padding: 20px;
     text-align: center;

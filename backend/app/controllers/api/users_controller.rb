@@ -1,6 +1,11 @@
 class Api::UsersController < ApplicationController
     before_action :set_user, only: [:update, :show]
 
+    def index
+        users = User.all
+        render json: { users: users }
+    end
+
     def update
         if params[:avatar].present?
             uploaded_image = params[:avatar]
@@ -32,9 +37,11 @@ class Api::UsersController < ApplicationController
     end
 
     def show
+        user = User.find(params[:id])
         render json: {
-            user: @user,
-            avatar: avatar_url(@user)
+            id: user.id,
+            nickname: user.nickname || user.name || "匿名",
+            avatar: user.avatar.presence || "/uploads/avatars/default_avatar.jpg" # デフォルト画像のパス
         }
     end
 
@@ -46,6 +53,7 @@ class Api::UsersController < ApplicationController
 
     def avatar_url(user)
         host = Rails.env.production? ? ENV['HOST'] : "http://localhost:3000"
+        puts "HOST: #{host}, Avatar: #{user.avatar}" # デバッグ出力
         "#{host}#{user.avatar}"
     end
 end

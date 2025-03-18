@@ -396,12 +396,10 @@ ul li {
 
 .received {
     float: left;
-    margin-left: 10px; /* 左側に少しずらす */
 }
 
 .sent {
     float: right;
-    margin-right: 10px; /* 右側に少しずらす */
 }
 
 .sent .message {

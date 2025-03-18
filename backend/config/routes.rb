@@ -17,7 +17,7 @@ Rails.application.routes.draw do
 
   # 管理者専用エンドポイント
   namespace :admin do
-    resources :users, only: [:index, :update, :destroy]  # 管理者用のユーザー管理
+    resources :users, only: [:index, :show, :update, :destroy]  # 管理者用のユーザー管理
   end
 
   resources :articles, only: [:index, :show] do

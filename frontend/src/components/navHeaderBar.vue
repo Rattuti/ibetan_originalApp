@@ -1,14 +1,17 @@
 <template>
     <nav>
         <div v-if="user && user.avatar" class="avatar-container">
-            <img :src="user.avatar" alt="プロフィール画像" class="avatar-icon" />
+            <img 
+                :src="user.avatar" 
+                alt="プロフィール画像" 
+                class="avatar-icon"
+            />
         </div>
         <div v-else class="avatar-placeholder">
             アイコン未設定
         </div>
         <div>
             <p>こんにちは、<span class="name">{{ displayName }}</span>さん</p>
-            <p class="email">現在、 {{ user?.email }} でログイン中です</p>
             <div class="error">{{ error }}</div>
         </div>
 
@@ -43,6 +46,7 @@ export default {
 
         // コンポーネントがマウントされたらユーザー情報を取得
         onMounted(async () => {
+            console.log(user.value.avatar); // user.avatar の中身をコンソールに出力
             if (!user.value) {
                 try {
                     await authStore.fetchUser();// ユーザー情報を取得
@@ -154,7 +158,7 @@ button {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-left: 10px;
+    margin-left: 20px;
 }
 
 .avatar-placeholder {

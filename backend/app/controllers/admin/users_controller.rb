@@ -13,6 +13,15 @@ class Admin::UsersController < ApplicationController
             render json: { error: "Internal Server Error" }, status: :internal_server_error
     end
 
+    def show
+        user = User.find(params[:id])
+        render json: {
+            id: user.id,
+            nickname: user.nickname || user.name || "匿名",
+            avatar: user.avatar.presence || "/uploads/avatars/default_avatar.jpg" # デフォルト画像のパス
+        }
+    end
+
     def update
         user = User.find(params[:id])
         if user.update(user_params)

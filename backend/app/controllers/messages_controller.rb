@@ -6,7 +6,7 @@ class MessagesController < ApplicationController
         # ヘッダーのログ出力
         Rails.logger.debug("受信したヘッダー: #{request.headers.inspect}")
 
-        messages = Message.includes(:user, likes: :user).all
+        messages = Message.includes(:user, likes: :user).order(created_at: :asc) 
         messages_array = messages.map do |message|
             {
                 id: message.id,
@@ -14,7 +14,7 @@ class MessagesController < ApplicationController
                 name: message.user.name,
                 content: message.content,
                 email: message.user.email,
-                nickname: message.user.nickname,
+                nickname: message.user.try(:nickname), # nil 対策
                 avatar: avatar_url(message.user),
                 created_at: message.created_at,
                 likes: message.likes.map { |like|
@@ -90,7 +90,7 @@ class MessagesController < ApplicationController
 
     def avatar_url(user)
         if user.avatar.present?
-            "#{request.base_url}/uploads/#{user.avatar}" # 例: public/uploads に保存されている場合
+            "#{request.base_url}#{user.avatar}" # 例: public/uploads に保存されている場合
         else
             "#{request.base_url}/uploads/default_avatar.png" # デフォルト画像
         end

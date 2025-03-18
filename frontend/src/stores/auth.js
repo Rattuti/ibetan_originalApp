@@ -3,10 +3,12 @@ import { ref } from 'vue';
 import axios from 'axios';
 
 const API_URL = 'http://localhost:3000/auth';
+const USERS_API_URL = 'http://localhost:3000/api/users'; // 例
 
 export const useAuthStore = defineStore('auth', () => {
-    const user = ref(null);
-    const isAuthenticated = ref(false);
+    const user = ref(null);// 現在ログインしているユーザー
+    const users = ref([]);
+    const isAuthenticated = ref(false);// 認証状態
 
     // 認証ヘッダー取得
     const getAuthHeaders = () => {
@@ -102,10 +104,10 @@ export const useAuthStore = defineStore('auth', () => {
     // ユーザー情報取得
     const fetchUser = async () => {
         try {
-            const headers = getAuthHeaders()|| {};
+            const headers = getAuthHeaders();
             console.log("取得した認証ヘッダー:", headers);
 
-            if (!headers || !headers['access-token']) {
+            if (!headers['access-token']) {
                 console.warn("アクセストークンが存在しないため、ログアウト処理を実行します");
                 await logout();
                 return;
@@ -120,5 +122,36 @@ export const useAuthStore = defineStore('auth', () => {
         }
     };
 
-    return { user, isAuthenticated, login, signUp, logout, fetchUser, getAuthHeaders };
+
+    // すべてのユーザーを取得
+    const fetchUsers = async () => {
+        try {
+            const headers = getAuthHeaders();
+            console.log("fetchUsers:🔑 取得した認証ヘッダー:", headers);
+        
+            if (!headers['access-token']) {
+                console.warn("アクセストークンなし: ユーザーリスト取得をスキップ");
+                return undefined;  // アクセストークンがない場合、明示的に undefined を返す
+            }
+        
+            const res = await axios.get(USERS_API_URL, { headers });
+            console.log("APIレスポンス:", res);  // レスポンスを確認
+            
+            if (res && res.data && Array.isArray(res.data.users)) {
+                console.log("レスポンスデータ:", res.data.users);
+                users.value = res.data.users; // 🔹 `authStore.users` を正しく更新
+                return res.data.users; // 🔹 `users` 配列のみ返す
+            } else {
+                console.error("APIレスポンスが不正:", res.data);
+                return undefined;
+            }
+        } catch (error) {
+            console.error("ユーザー一覧取得エラー:", error);
+            return undefined;
+        }
+    };
+    
+
+
+    return { user, users, isAuthenticated, login, signUp, logout, fetchUser, fetchUsers, getAuthHeaders };
 });

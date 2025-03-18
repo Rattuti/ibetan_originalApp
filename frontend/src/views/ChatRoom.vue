@@ -2,7 +2,7 @@
   <div class="container">
       <navHeaderBar />
       <ArticleWindow />
-      <chatBubble @connectCable="connectCable" :messages="formattedMessages" ref="chatBubble" />
+      <chatBubble :users="users" @connectCable="connectCable" :messages="formattedMessages" ref="chatBubble" />
       <chatForm @connectCable="connectCable" />
       <CalendarWindow />
       <navFooterBar />
@@ -35,10 +35,32 @@ export default {
   },
   setup() {
     const authStore = useAuthStore(); // Piniaストアの取得
+    const users = ref([]);
     const messages = ref([]);
     const messageChannel = ref(null);
     const errorMessage = ref('');
     const chatBubbleRef = ref(null); // ref を使って参照を取得
+
+    // authStore.fetchUsers() の戻り値を確認
+    const fetchUsers = async () => {
+      try {
+        const res = await authStore.fetchUsers();
+        console.log("fetchUsers のレスポンス:", res);  // ここでログを確認
+
+        // res の構造をチェック
+        if (res?.users && Array.isArray(res.users)) {
+          users.value = res.users;
+        } else if (res?.data?.users && Array.isArray(res.data.users)) {
+          users.value = res.data.users; // 念のため `res.data.users` もチェック
+        } else {
+          console.error("❌ 想定外のレスポンス:", res);
+          users.value = [];
+        }
+      } catch (err) {
+        console.error("ユーザー情報取得エラー:", err);
+        users.value = [];
+      }
+    };
 
     // メッセージの整形
     const formattedMessages = computed(() => {
@@ -131,6 +153,7 @@ export default {
     // 初回マウント時にWebSocket接続
     onMounted(() => {
       setupWebSocket();
+      fetchUsers(); 
     });
 
     // コンポーネント破棄時にWebSocketを解除
@@ -142,9 +165,10 @@ export default {
     });
 
     return {
+      users,
       formattedMessages,
       connectCable,
-      chatBubbleRef, // ref を返す
+      chatBubbleRef,
     };
   }
 };
