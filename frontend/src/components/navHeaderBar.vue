@@ -114,27 +114,6 @@ nav p {
     color: #444;
 }
 
-nav p.email {
-    font-size: 14px;
-    color: #999;
-}
-
-.logo-container {
-    display: flex;
-    align-items: center;
-}
-
-.logo {
-    width: 80px;
-    /* ロゴ画像の幅を設定 */
-    height: auto;
-    /* 比率を維持 */
-    margin-right: 10px;
-    /* テキストとの間隔 */
-    margin-left: 20px;
-    /* 左からの余白を追加 */
-}
-
 .button-container {
     display: flex;
     gap: 10px;

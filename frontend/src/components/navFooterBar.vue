@@ -55,7 +55,10 @@ footer {
     justify-content: center;
     align-items: center;
     margin-left: 20px; /* ロゴの右側に少し余白 */
+    margin: 0 auto; /* 自動的に中央揃え */
+    max-width: 80%; /* フッターの最大幅を制限 */
 }
+
 
 .footer-nav {
     list-style: none;
