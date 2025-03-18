@@ -33,11 +33,11 @@
 ## Top画面
 ### 新規登録機能
 新規ユーザ登録ができます。
-![image](https://github.com/user-attachments/assets/b327f1cf-c0b9-4c56-ab6d-04ad672a5ed2)
+![image](https://github.com/user-attachments/assets/d54be70e-1abd-4b02-aac8-12cf2a44e8fe)
 
 ### ログイン機能
 登録済なら、「メールアドレス」「パスワード」を入力しログインできます。
-![image](https://github.com/user-attachments/assets/5dab7fc9-ea40-419e-8683-b7ec7d4028e3)
+![image](https://github.com/user-attachments/assets/558a45a4-337b-4b85-8d2d-c9e59fcacb0d)
 
 ## ホーム画面
 ### ヘッダー
