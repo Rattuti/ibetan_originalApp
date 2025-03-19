@@ -55,9 +55,14 @@
 ![image](https://github.com/user-attachments/assets/50ff6ccc-0be2-48eb-b198-86d2af3904ab)
 
 ### ライブメッセージ + いいね機能
-メッセージを入力し投稿すると、アバター画像と登録名を含むメッセージが表示されます。  
-メッセージにダブルクリックすると、マーク（❤、⭐️、👍️）が選択できる。  
-![image](https://github.com/user-attachments/assets/096d06ad-2313-4f06-ad10-28b236cedc6b)
+メッセージを入力し投稿すると、アバター画像と登録名を含むメッセージがリアルタイムで表示されます。  
+意見交換の場として用意しました。  
+メッセージをダブルクリックすると、マーク（❤、⭐️、👍️）が選択できます。  
+![image](https://github.com/user-attachments/assets/5c254730-9d3a-47cb-92b9-ae929d3dff9e)
+
+ログインユーザのメッセージは右側の列として表示されます。  
+※　他のユーザは左列で表示されます。  
+![image](https://github.com/user-attachments/assets/638b8e15-8869-45b1-8513-edfb7c2e1dca)
 
 #### カレンダー機能(CRUD)
 講座の開催日が自動でマンスリーカレンダーに表示される。  
