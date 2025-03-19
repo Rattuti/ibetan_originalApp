@@ -88,14 +88,14 @@
 
 ## 管理者画面
 ### 管理者権限
-登録ユーザーを一覧で管理できます。  
-actionsの「edit」を押すと、編集画面に切り替わり、名前と権限が変更できます。  
-「delete」を押すと、対象のユーザ情報が削除されます。  
-![image](https://github.com/user-attachments/assets/8a409917-8ce6-4fde-88ec-5f499d154a12)
+登録ユーザーの一覧管理ができます。  
+Actions列では登録ユーザの編集操作ができます。  
+「Edit」を押すと、登録ユーザの編集モードに切り替わり、名前と役割の変更が可能です。  
+※「Delete」を押すと、対象のユーザと紐づく履歴がすべて削除されます。    
+ユーザからのお問い合わせは、Contact列で確認ができます。  
+![image](https://github.com/user-attachments/assets/9da3847c-ea4a-46cd-aac1-234a14b46db3)
 
-お問い合わせのあったメッセージは、管理者画面で一覧で表示されます。  
-
-![image](https://github.com/user-attachments/assets/ff2013d2-e653-4832-ab65-c8865408105e)
+![image](https://github.com/user-attachments/assets/2ecd8440-f612-48b5-b51b-779c9c0e7b76)
 
 ## ポリシーページ
 アプリ利用上の注意点や規約を記述しています。  
