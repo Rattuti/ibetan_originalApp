@@ -100,7 +100,7 @@ Actions列では登録ユーザの編集操作ができます。
 
 ## ポリシーページ
 アプリ利用上の注意点や規約を記述しています。  
-![image](https://github.com/user-attachments/assets/ca7c61cf-a38d-4342-ac41-b6f39dc3e3d6)
+![image](https://github.com/user-attachments/assets/a4b72829-c49a-48db-8930-38e204a03b77)
 
 ## インフラ構成図
 ### 新規登録や認証処理の流れ  
