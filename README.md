@@ -69,7 +69,7 @@
 
 #### カレンダー機能(CRUD)
 講座の開催日は自動でマンスリーカレンダーに登録表示されます。  
-![image](https://github.com/user-attachments/assets/120563f9-4b37-4f6a-8c8d-ea32abff5752)
+![image](https://github.com/user-attachments/assets/c1a00862-43d7-4eea-9550-494afd17333a)
 
 カレンダー上で対応する講座を選択すると、講座内容の詳細が確認できます。  
 ※　講座への申し込みは公式HPより申請してください。  
