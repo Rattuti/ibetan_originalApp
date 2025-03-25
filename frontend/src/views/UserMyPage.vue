@@ -8,7 +8,7 @@
         <div class="profile-section">
           <label class="profile-label">
             <div v-if="user.avatar && user.avatar !== ''" class="avatar-container">
-              <img v-if="user.avatar" :src="user.avatar" alt="プロフィール画像" class="avatar" />
+              <img v-if="avatarUrl" :src="avatarUrl" alt="プロフィール画像" class="avatar" />
             </div>
             <div v-else class="avatar-placeholder">画像未設定</div>
               <input type="file" @change="onFileChange" class="file-input" id="file" />
@@ -24,7 +24,6 @@
             <p><strong>メールアドレス:</strong> {{ user?.email || "未設定" }}</p>
             <div class="button-container">
               <button @click="saveChanges">変更を保存</button>
-              <button @click="goToProfile">プロフィール編集</button>
             </div>
           </div>
 
@@ -39,7 +38,7 @@
 </template>
 
 <script>
-import { onMounted, ref } from "vue";
+import { computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import navHeaderBar from "../components/navHeaderBar";
@@ -58,7 +57,7 @@ export default {
   name: "UserMyPage",
   setup() {
     const authStore = useAuthStore(); //useAuthStoreの呼び出し
-    const user = ref(authStore.user || { name: "", email: "", nickname: "", avatar: "" }); // Pinia ストアから user を取得
+    const user = computed(() => authStore.user || { avatar: "", nickname: "", name: "", email: "" });
 
     // ヘッダーの取得
     const getAuthHeaders = authStore.getAuthHeaders;
@@ -66,10 +65,11 @@ export default {
 
     // ローカルストレージからユーザー情報を読み込む
     onMounted(() => {
+      console.log("マイページのユーザーデータ:", user.value);
+      console.log("authStore.user:", authStore.user);
       const savedUser = localStorage.getItem("user");
       if (savedUser) {
-        authStore.user = JSON.parse(savedUser); // Pinia の user を更新
-        user.value = { ...authStore.user }; // user も更新
+        user.value = JSON.parse(savedUser); // Pinia の user を更新
       } else {
         alert("ユーザー情報がありません。再度ログインしてください。");
       }
@@ -85,11 +85,8 @@ export default {
           console.log("Response:", response);
           // サーバーからの最新情報を反映
           const updatedUser = response.data;
-          user.value.id = updatedUser.id
-          user.value.name = updatedUser.name;
-          user.value.email = updatedUser.email;
-          user.value.nickname = updatedUser.nickname;
-          user.value.avatar = updatedUser.avatar;
+          user.value = updatedUser;
+          authStore.user = updatedUser;  // ここで `authStore.user` も更新
 
           // ローカルストレージに保存
           localStorage.setItem("user", JSON.stringify(user.value));
@@ -100,6 +97,13 @@ export default {
           alert("保存中にエラーが発生しました。");
         });
     };
+
+    const avatarUrl = computed(() => {
+      if (user.value?.avatar) {
+        return `http://localhost:3000${user.value.avatar}`;
+      }
+      return null;
+    });
 
     // アバター画像をアップロード
     const onFileChange = async (event) => {
@@ -131,6 +135,7 @@ export default {
 
     return {
       user,
+      avatarUrl, 
       onFileChange,
       saveChanges,
       goToProfile,
@@ -161,8 +166,8 @@ navHeaderBar, navFooterBar {
   }
   
 .avatar-placeholder {
-  width: 100px;
-  height: 100px;
+  width: 50px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;

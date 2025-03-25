@@ -14,13 +14,15 @@
                 placeholder="パスワード" 
                 required 
             />
-            <button type="submit" class="btn">ログイン</button>
-
+            <div class="login-container">
+                <button type="submit" class="btn login-btn">ログイン</button>
+                <button @click="handleGuestLogin" class="btn guest-btn">ゲストログイン</button>
+            </div>
             <p class="change-form">
                 初めての方は
                 <span @click="toggleForm">
                     こちら
-                </span>をクリックして<br>ご登録ページへお進みください
+                </span>をクリック<br>ご登録ページへお進みください
             </p>
         </form>
         <p v-if="authStore.isAuthenticated">ログイン中: {{ authStore.user?.name }}</p>
@@ -82,6 +84,18 @@ const signUpPasswordConfirmation = ref('')
 
 const shouldShowLoginForm = ref(true)
 
+// ゲストログイン時に遷移
+const handleGuestLogin = async () => {
+    try {
+        await authStore.guestLogin();
+        await authStore.fetchUser(); // ユーザー情報を再取得
+        console.log("ログイン後のユーザー:", authStore.user);
+        router.push('/chatRoom'); // ログイン成功後にページ遷移
+    } catch (error) {
+        console.error('ゲストログインに失敗:', error);
+    }
+};
+
 // ログイン・新規登録フォーム切り替えトグルボタン
 const toggleForm = () => {
     shouldShowLoginForm.value = !shouldShowLoginForm.value
@@ -125,16 +139,16 @@ const handleSignUp = async () => {
 
 <style scoped>
 h2{
-    color:white;
+    color:#39cccc;
 }
 .change-form{
-    color:white;
+    color:#39cccc;
 }
 .btn {
-    background-color: #007bff; /* デフォルトの青色 */
+    background-color: #39cccc; /* デフォルトの青色 */
     color: white; /* 文字色を白に */
     border: none;
-    padding: 10px 15px;
+    padding: 5px 15px 5px 10px;
     cursor: pointer;
     font-size: 16px;
     border-radius: 5px;
@@ -144,5 +158,29 @@ h2{
 .btn:hover {
     background-color: #0056b3; /* ホバー時に少し濃い青に */
 }
-</style>
+/* ログインボタン (シアン) */
+.login-btn {
+    min-width: 100px;
+    background-color: #39cccc;
+    color: white;
+}
+.login-btn:hover {
+    background-color: #2aa5a5; /* 少し濃いシアン */
+}
+.login-container {
+    display: flex;
+    justify-content: center; /* ボタンを中央に配置 */
+    gap: 3px; /* ボタンの間隔 */
+}
 
+/* ゲストログインボタン (赤) */
+.guest-btn {
+    min-width: 150px;
+    background-color: #FF0000;
+    color: white;
+}
+.guest-btn:hover {
+    background-color: #CC0000; /* 少し暗めの赤 */
+}
+
+</style>

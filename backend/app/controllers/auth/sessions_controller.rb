@@ -1,8 +1,38 @@
 class Auth::SessionsController < DeviseTokenAuth::SessionsController
+    skip_before_action :verify_authenticity_token, only: [:guest_login]
     skip_before_action :verify_authenticity_token, only: [:create, :destroy]
     # ログイン・ログアウト処理
 
-    def creat
+    # ゲストログイン処理
+    def guest_login
+        guest_user = User.find_by(email: 'guest@example.com')
+    
+        unless guest_user
+        guest_user = User.create!(
+            name: 'Guest User',
+            email: 'guest@example.com',
+            password: SecureRandom.hex(10)
+        )
+        end
+    
+        # トークンの生成
+        auth_token = guest_user.create_new_auth_token
+    
+        sign_in(:user, guest_user)  # Devise の sign_in メソッドを使用
+    
+        render json: {
+            status: 'success',
+            message: 'ゲストログイン成功',
+            user: guest_user,
+            auth_token: auth_token  # トークンを返す
+        }
+        rescue ActiveRecord::RecordInvalid => e
+            render json: { status: 'error', message: 'ユーザー作成に失敗しました', error: e.message }, status: :unprocessable_entity
+    end
+
+
+    # 通常のログイン処理
+    def create
         Rails.logger.info "ログイン処理開始: #{params.inspect}"
     
         user = User.find_by(email: params[:email])
@@ -60,4 +90,5 @@ class Auth::SessionsController < DeviseTokenAuth::SessionsController
     
         render json: current_user&.slice(:id, :name, :email, :role) || { error: "ユーザーが認証されていません" }
     end
+
 end

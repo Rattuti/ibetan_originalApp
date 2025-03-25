@@ -28,10 +28,29 @@
             <span v-else>{{ user.role }}</span>
           </td>
           <td>
-            <button v-if="!user.isEditing" @click="user.isEditing = true">Edit</button>
-            <button v-if="user.isEditing" @click="updateUser(user)">Save</button>
-            <button v-if="user.isEditing" @click="cancelEdit(user)">Cancel</button>
-            <button @click="deleteUser(user.id)">Delete</button>
+            <div class="actions">
+              <button 
+                v-if="!user.isEditing" 
+                @click="user.isEditing = true"
+              >
+                Edit
+              </button>
+              <button 
+                v-if="user.isEditing" 
+                :class="{ active: user.isEditing }" 
+                @click="updateUser(user)"
+              >
+                Save
+              </button>
+              <button 
+                v-if="user.isEditing" 
+                :class="{ active: user.isEditing }" 
+                @click="cancelEdit(user)"
+              >
+                Cancel
+              </button>
+              <button class="delete" @click="deleteUser(user.id)">Delete</button>
+            </div>
           </td>
         </tr>
       </tbody>
@@ -168,5 +187,29 @@ th, td {
 
 th {
   background-color: #f4f4f4; /* ヘッダーを目立たせる */
+}
+.actions {
+  display: flex;         /* Flexboxを使用して横並びに */
+  gap: 30px;              /* ボタン間の間隔を設定 */
+}
+
+button {
+  padding: 5px 10px;     /* ボタンに適度な余白を追加 */
+  cursor: pointer;       /* ボタンにカーソルを乗せると手の形に */
+}
+
+.actions button.active {
+  background-color: orange;
+  color: white;
+}
+
+/* Deleteボタンを赤色に */
+.actions button.delete {
+  background-color: red;
+  color: white;
+}
+
+.actions button.delete:hover {
+  background-color: darkred;
 }
 </style>

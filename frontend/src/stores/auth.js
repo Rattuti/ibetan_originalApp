@@ -14,15 +14,20 @@ export const useAuthStore = defineStore('auth', () => {
     const getAuthHeaders = () => {
         const authHeaders = JSON.parse(localStorage.getItem("authHeaders"));
         console.log("取得した認証ヘッダー:", authHeaders);
-
-        return authHeaders && authHeaders["access-token"] ? {
+    
+        if (!authHeaders || !authHeaders["access-token"]) {
+            console.error("認証トークンがありません。ログインが必要です。");
+            return {};
+        }
+    
+        return {
             "access-token": authHeaders["access-token"],
             "client": authHeaders["client"],
             "uid": authHeaders["uid"],
             "expiry": authHeaders["expiry"],
             "token-type": authHeaders["token-type"],
             "Content-Type": "application/json"
-        } :{};
+        };
     };
 
     // 認証ヘッダー保存
@@ -31,24 +36,45 @@ export const useAuthStore = defineStore('auth', () => {
             console.warn("⚠️ 認証ヘッダーの保存をスキップ: ヘッダー情報が無効です");
             return;
         }
-
+    
         const authHeaders = {
-            'access-token': headers.get('access-token'),
-            'client': headers.get('client'),
-            'uid': headers.get('uid'),
-            'expiry': headers.get('expiry'),
-            'token-type': headers.get('token-type')
+            'access-token': headers['access-token'],
+            'client': headers['client'],
+            'uid': headers['uid'],
+            'expiry': headers['expiry'],
+            'token-type': headers['token-type']
         };
     
         console.log("🔍 保存する認証ヘッダー:", authHeaders);
         localStorage.setItem('authHeaders', JSON.stringify(authHeaders));
     };
+    
 
     // エラーハンドリング
     const handleError = (error) => {
         console.error("エラー:", error.response?.data || error.message);
         throw error;
     };
+
+    // ゲストログイン関数を追加
+    const guestLogin = async () => {
+        try {
+            const res = await axios.post('http://localhost:3000/auth/guest_login');
+            
+            console.log("レスポンスヘッダー:", res.headers); // ここを確認
+            
+            saveAuthHeaders(res.headers); // ここでヘッダーを保存
+            console.log("保存後のヘッダー:", getAuthHeaders()); // 保存された値を確認
+    
+            isAuthenticated.value = true;
+            await fetchUser();
+        } catch (error) {
+            console.error("ゲストログインエラー:", error);
+        }
+    };
+    
+    
+
 
     // ログイン処理
     const login = async (email, password) => {
@@ -153,5 +179,5 @@ export const useAuthStore = defineStore('auth', () => {
     
 
 
-    return { user, users, isAuthenticated, login, signUp, logout, fetchUser, fetchUsers, getAuthHeaders };
+    return { user, users, isAuthenticated, guestLogin, login, signUp, logout, fetchUser, fetchUsers, getAuthHeaders };
 });

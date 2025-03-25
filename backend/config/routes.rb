@@ -7,6 +7,11 @@ Rails.application.routes.draw do
 
   mount ActionCable.server => '/cable'
 
+  # Devise のスコープを明示して競合を避ける
+  devise_scope :user do
+    post 'auth/guest_login', to: 'auth/sessions#guest_login'
+  end
+
   # 一般ユーザー用エンドポイント
   namespace :api do
     resources :users, only: [:index, :show, :update, :destroy]

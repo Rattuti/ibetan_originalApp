@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container-chat">
     <articleScraping
       :articles="articles"
       :pageType="'UserMyPage'"
@@ -72,7 +72,7 @@ export default {
 </script>
 
 <style scoped>
-.container {
+.container-chat {
   width: 100%;
   margin: 0 auto;
   font-family: Arial, sans-serif;

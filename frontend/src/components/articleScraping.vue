@@ -187,7 +187,7 @@ export default {
 
 /* テーブルヘッダーのデザイン */
 .articles thead tr {
-    background-color: #007BFF;
+    background-color: #39cccc;
     color: #fff;
 }
 
@@ -229,32 +229,11 @@ export default {
     border-radius: 3px;  /* 丸みをつける */
 }
 
-/* タイトル列 */
-.title-cell {
-    width: 250px; /* タイトルの幅を小さく設定 */
-    white-space: nowrap; /* 文字を1行に収める */
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
 /* タグ列（アイコン） */
 .favorite-cell {
     text-align: center; /* アイコンを中央に配置 */
     width: auto; /* 列幅を自動調整 */
     white-space: nowrap; /* 横文字固定 */
-}
-
-/* アイコンのスタイル */
-.icon {
-    float: left; /* アイコンを左寄せ */
-    margin-right: 5px;
-}
-
-/* お気に入り数 */
-.favorite-count {
-    display: inline-block;
-    text-align: right; /* お気に入り数を右寄せ */
-    width: 100%; /* アイコンと同じ行に表示させる */
 }
 
 /* リンクスタイル */

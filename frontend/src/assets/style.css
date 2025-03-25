@@ -4,7 +4,7 @@
 @tailwind forms;
 
 body {
-    background: #51b392;
+    background: white;
     color: #444;
 }
 
@@ -23,7 +23,7 @@ font-size: 14px;
 
 button {
 text-decoration: none;
-background: #51b392;
+background: #39cccc;
 color: white;
 font-weight: bold;
 border: 0;

@@ -176,38 +176,38 @@ onMounted(fetchEvents);
 
 <style scoped>
 .button-area {
-  margin-bottom: 0.5em;
+    margin-bottom: 0.5em;
   /* ボタン下の余白を最小化 */
-  display: flex;
+    display: flex;
   /* 横並びに配置 */
-  align-items: center;
+    align-items: center;
   /* ボタンと名前を縦方向に中央揃え */
-  justify-content: space-between;
+    justify-content: space-between;
   /* 両端のボタンと中央の名前を適切に配置 */
 }
 .button-area button {
-  margin: 0 10px;
+    margin-left: 50px; /* 最初のボタンに左マージンを追加 */
   /* ボタン間の間隔を調整 */
-  font-size: 0.9em;
+    font-size: 0.9em;
   /* ボタン文字サイズを調整 */
 }
 .calendar-btn {
-  padding: 4px 8px;
+    padding: 4px 8px;
   /* 小さめのパディング */
-  font-size: 12px;
+    font-size: 12px;
   /* 文字サイズを小さく */
-  width: auto;
-  min-width: unset;
+    width: auto;
+    min-width: unset;
   /* 最小幅を指定 */
-  height: 30px;
+    height: 30px;
   /* 高さを小さく */
 }
 .button-area .calendar-name {
-  text-align: center;
+    text-align: center;
   /* 名前を中央揃え */
-  font-weight: bold;
+    font-weight: bold;
   /* 見た目を少し目立たせる */
-  flex-grow: 1;
+    flex-grow: 1;
   /* 名前部分を伸ばして中央に配置 */
 }
 
@@ -222,11 +222,11 @@ onMounted(fetchEvents);
   /* 表下の隙間をなくす */
 }
 .content {
-  margin: 1em auto;
-  width: auto;
-  display: flex;
+    margin: auto;
+    width: auto;
+    display: flex;
   /* ボタンとカレンダーを横並びに */
-  flex-direction: column;
+    flex-direction: column;
   /* ボタンをカレンダーの上に配置 */
 }
 
@@ -249,49 +249,49 @@ onMounted(fetchEvents);
 /* 日付ごとの表示 */
 .calendar-daily {
     flex: 1;
-  min-height: 125px;
-  border-right: 1px solid gainsboro;
-  border-bottom: 1px solid gainsboro;
-  position: relative;
-  overflow: hidden;
-  height: 100px;
+    min-height: 125px;
+    border-right: 1px solid gainsboro;
+    border-bottom: 1px solid gainsboro;
+    position: relative;
+    overflow: hidden;
+    height: 100px;
 }
 .calendar-youbi.sunday {
-  color: red;
+    color: red;
 }
 
 .calendar-youbi.saturday {
-  color: blue;
+    color: blue;
 }
 
 .calendar-daily.sunday {
-  background-color: #ffe5e5;
+    background-color: #ffe5e5;
 }
 
 .calendar-daily.saturday {
-  background-color: #e5f3ff;
+    background-color: #e5f3ff;
 }
 
 .calendar-day {
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 5px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 5px;
 }
 
 .calendar-events {
-padding: 1px 3px;
+    padding: 1px 3px;
   /* 余白を調整 */
-  border-radius: 3px;
-  color: white;
-  font-size: 0.9em;
-  font-weight: bold;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  height: auto;
+    border-radius: 3px;
+    color: white;
+    font-size: 0.9em;
+    font-weight: bold;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: auto;
   /* 高さを15pxに */
-  line-height: 15px;
+    line-height: 15px;
 }
 .calendar-events > div {
   border: 1px solid white; /* 黒色の枠線 */

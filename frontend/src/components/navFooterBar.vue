@@ -23,8 +23,8 @@
 
 <style>
 footer {
-    background-color: #333;
-    color: #fff;
+    background-color: #eee;
+    color: #39cccc;
     padding: 5px 0;
     display: flex;
     flex-direction: column; /* 縦方向に並べる */
@@ -50,6 +50,8 @@ footer {
 }
 
 .footer-content {
+    color: #39cccc;
+    font-weight: bold;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -74,7 +76,8 @@ footer {
 }
 
 .footer-nav li a {
-    color: #fff;
+    color: #39cccc;
+    font-weight: bold;
     text-decoration: none;
     font-size: 1em; /* 文字サイズを1emに設定 */
     line-height: 1.2; /* 行間を調整 */

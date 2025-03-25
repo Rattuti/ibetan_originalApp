@@ -1,17 +1,25 @@
 <template>
     <div class="container welcome">
-        <div class="content-wrapper">
-            <!-- ロゴとテキスト -->
-            <div class="logo-section">
-                <img src="/images/logo_Ibetan.png" alt="Logo" class="logo-image" />
+        <topHeaderBar />
+        <div class="image-section">
+            <img src="@/assets/background.jpg" alt="背景画像" class="full-image">
+            <div class="content-background">
+                <div class="content-wrapper">
+                    <!-- ロゴとテキスト -->
+                    <div class="logo-section">
+                        <div class="logo-title">
+                            <img src="/images/logo_Top_ibetan.png" alt="Logo" class="logo-image"/>
+                            <p class="subtext-title">ibetan</p>
+                        </div>
+                        <p class="subtext">〜 地域イベント検索アプリ 〜</p>
 
-                <p class="subtext">お家でもっと地域のコミュニティに参加できるよ</p>
+                    </div>
 
-            </div>
-
-            <!-- ログインフォーム -->
-            <div class="form-section">
-                <loginForm @redirectToChatRoom="redirectToChatRoom" />
+                    <!-- ログインフォーム -->
+                    <div class="form-section">
+                        <loginForm @redirectToChatRoom="redirectToChatRoom" />
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -19,33 +27,46 @@
         <div class="features-section">
             <h2 class="features-title">このアプリで出来る3つのこと</h2>
             <div class="features-list">
+
                 <div class="feature-item">
                     <h3 class="feature-title">タグ機能</h3>
+                    <img src="@/assets/TagCheck.jpg" alt="タグ機能の画像" class="feature-image">
                     <p class="feature-description">
                         タグマークをチェックするとマイページでも確認できるよ。</p>
                 </div>
 
                 <div class="feature-item">
                     <h3 class="feature-title">チャット機能</h3>
+                    <img src="@/assets/LiveChat.jpg" alt="タグ機能の画像" class="feature-image">
                     <p class="feature-description">
                         リアルタイムにチャットを送って、いいねも付けてね。</p>
+                    <br>
                 </div>
 
                 <div class="feature-item">
                     <h3 class="feature-title">カレンダー機能</h3>
+                    <img src="@/assets/CalendarEvent.jpg" alt="タグ機能の画像" class="feature-image">
                     <p class="feature-description">
                         イベントの開催日は自動で表示されるよ。予定は個別に追加できるので使ってみてね。</p>
                 </div>
             </div>
         </div>
-
+        <topFooterBar />
     </div>
+
 </template>
 
 <script>
+import topHeaderBar from '../components/topHeaderBar.vue';
 import loginForm from '../components/loginForm.vue';
+import topFooterBar from '../components/topFooterBar.vue';
+
 export default {
-    components: { loginForm },
+    components: {
+        topHeaderBar,
+        loginForm,
+        topFooterBar
+    },
     data(){
         return{
         shouldShowLoginForm: true
@@ -60,61 +81,112 @@ export default {
 </script>
 
 <style>
-.welcome {
-    text-align: center;
-    padding: 20px 0;
+/* 全体のコンテナ設定 */
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 130vh;
 }
 
-.content-wrapper {
+/* Welcome セクション */
+.welcome {
+    text-align: center;
+    background-size: cover;
+    background-position: top center;
+    background-repeat: no-repeat;
+    height: 50vh; /* 画面の半分の高さを確保 */
     display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative; /* 子要素に絶対配置するため */
+}
+
+/* 画像とコンテンツの配置 */
+.image-section {
+    position: relative;
+    width: 100%;
+    height: 55vh;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* 左側に寄せる */
+    background-image: url('@/assets/background.jpg');
+    background-size: cover;
+    background-position: center;
+}
+.content-background{
+    position: absolute;
+    top: 42%; /* 画像の上半分に重ねる */
+    left: 38%;
+    transform: translate(-100%, -42%);
+    display: flex;
+    background-color: rgba(255, 255, 255, 0.927); /* 薄鼠色（#C0C0C0）+ 半透明 */
+    border-radius: 10px; /* 角を丸める */
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2); /* 立体感 */
+}
+/* コンテンツのレイアウト */
+.content-wrapper {
+    flex-direction: column; /* 横並びに変更 */
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
+    max-width: 300px;
+    margin: 5 auto;
 }
 
+/* ロゴセクション */
 .logo-section {
-    width: 45%; /* ロゴを画面の半分に設定 */
-    text-align: center;
-    margin-left:20px;
+    width: 35%;
+    text-align: left;
+    padding:10px;
 }
 
 .logo-image {
-    max-width: 100%;
+    max-width: 35%;
+    min-width: 45px;
     height: auto;
 }
 
+.logo-title{
+    display: flex;  /* 横並びにする */
+
+}
+
+.subtext-title{
+    font-size: 30px;
+    font-weight: bold;
+    color:#39cccc;
+    padding:0px 10px 0px 10px;
+}
+
 .subtext {
-    margin-top: 15px;
+    margin-top: 5px;
     font-size: 16px;
-    color: #555;
+    color:#39cccc;
+    min-width: 250px;
+    width:auto;
+    text-align: center; 
 }
 
+/* ログインフォーム */
 .form-section {
-    width: 45%; /* フォームを画面の半分に設定 */
-    margin-right: 20px;;
-}
-
-.change-form {
-    font-size: 14px;
-    margin-top: 20px;
+    width: 30%;
+    margin-right: 20px;
+    min-width: 250px;
+    width:auto;
 }
 
 .welcome form {
     width: 100%;
-    margin: 20px auto;
-}
-
-.welcome label {
-    display: block;
-    margin: 20px 0 10px;
+    max-width: 250px; /* 最大幅を設定 */
+    margin: 10px auto;
 }
 
 .welcome input {
-    width: 100%;
-    padding: 12px 20px;
-    margin: 8px auto;
+    width: 200%;
+    padding: 8px 10px;
+    width:auto;
+    min-width: 250px;
+    margin: 6px auto;
     border-radius: 4px;
     border: 1px solid #eee;
     outline: none;
@@ -128,59 +200,75 @@ export default {
 }
 
 .welcome button {
-    margin: 20px auto;
-}
-.welcome {
-    text-align: center;
-    padding: 20px 0;
-    background-image: url('@/assets/background.jpg');/* 背景画像のパス */
-    background-size: cover; /* 画像を画面いっぱいに表示 */
-    background-position: center; /* 画像を中央配置 */
-    background-repeat: no-repeat; /* 画像の繰り返しを防ぐ */
-    min-height: 100vh; /* 画面全体をカバー */
+    margin: 5px auto;
 }
 
+/* 機能リストセクション */
 .features-section {
-    padding: 20px;
+    height: absolute; /* 画面の半分を確保 */
+    min-height: 62vh; /* 必要に応じて最低限の高さを確保 */
+    background-color: #f8f8f8;
+    padding: 0px 0px;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .features-title {
-    color:white;
     font-size: 24px;
     font-weight: bold;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+    color: #39cccc;
 }
 
 .features-list {
     display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    flex-wrap: wrap; /* 小さな画面で折り返し表示 */
+    justify-content: space-around;
+    flex-wrap: wrap;
+    max-width: 900px;
+    margin: 3px auto;
 }
 
 .feature-item {
+    padding:10px 0 0 0;
     width: 30%;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    background: rgba(241, 240, 240, 0.867);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    align-items: center; /* 中央揃え */
     text-align: left;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    display: flex; /* 横並びにする */
+    flex-direction: column; /* 縦並び */
+    align-items: center; /* 中央揃え */
+}
+
+.feature-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
 }
 
 .feature-title {
     font-size: 18px;
     font-weight: bold;
-    text-align: center;
     margin-bottom: 10px;
+    color: #39cccc;
+    text-align: center;
+}
+
+.feature-image {
+    max-width: 80%;
+    height: auto;
+    border-radius: 4px;
+    display: block;
+    margin: 0;
 }
 
 .feature-description {
     font-size: 14px;
-    color: #555;
+    color: #39cccc;
+    padding: 5px;
 }
-.subtext {
-    color: white;
-}
+
 </style>

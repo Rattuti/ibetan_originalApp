@@ -1,14 +1,16 @@
 <template>
     <nav>
-        <div v-if="user && user.avatar" class="avatar-container">
+        <div v-if="user && userAvatar" class="avatar-container">
             <img 
-                :src="user.avatar" 
+                :src="userAvatar"
                 alt="プロフィール画像" 
                 class="avatar-icon"
             />
         </div>
         <div v-else class="avatar-placeholder">
-            アイコン未設定
+            アバター
+            <br>画像
+            <br>未設定
         </div>
         <div>
             <p>こんにちは、<span class="name">{{ displayName }}</span>さん</p>
@@ -41,18 +43,29 @@ export default {
         // ユーザー情報をcomputedでリアクティブに取得
         const user = computed(() => authStore.user);
 
+        // フルパスのアバターURLを作成
+        const userAvatar = computed(() => {
+            if (user.value?.avatar) {
+                return `http://localhost:3000${user.value.avatar}`; 
+                // Railsのポート番号に合わせる
+            }
+            return null;
+        });
+
         // ユーザーの表示名を決定（ニックネーム優先、なければ名前、どちらもなければ「ゲスト」）
         const displayName = computed(() => user.value?.nickname || user.value?.name || "ゲスト");
 
         // コンポーネントがマウントされたらユーザー情報を取得
         onMounted(async () => {
-            console.log(user.value.avatar); // user.avatar の中身をコンソールに出力
+            console.log("ユーザーデータ:", user.value); // user の全データを確認
+            console.log("ユーザーアバター:", user.value?.avatar); // user.avatar の値を確認
+
             if (!user.value) {
                 try {
                     await authStore.fetchUser();// ユーザー情報を取得
+                    console.log("取得したユーザー:", user.value);
                 } catch (err) {
                     console.error("ユーザー情報の取得に失敗しました:", err);
-                    error.value = "ユーザー情報の取得に失敗しました。";
                 }
             }
         });
@@ -87,6 +100,7 @@ export default {
 
         return {
             user,
+            userAvatar,
             error,
             displayName,
             goToHome,
@@ -105,7 +119,7 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: white;
+    background-color: #eee;
 }
 
 nav p {

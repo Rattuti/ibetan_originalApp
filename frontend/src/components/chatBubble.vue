@@ -78,7 +78,7 @@ export default {
             if (!authStore.users) return {};
             return authStore.users.reduce((acc, user) => {
                 acc[user.id] = {
-                nickname: user.nickname || "不明",
+                nickname: user.nickname || user.name,
                 avatar: user.avatar || "http://localhost:3000/uploads/avatars/default_avatar.jpg",
                 };
                 return acc;
@@ -184,7 +184,7 @@ export default {
 
             // クリック数のトグル（切り替え）
             const newClickValue = currentLike == null
-                ? 1 
+                ? 1
                 : (currentLike.click === 2 ? 0 : currentLike.click + 1);// 最初のクリックなら 1 を設定
             
                 console.log(`🔍 現在のクリック値: ${currentLike ? currentLike.click : 'なし'}`);
@@ -341,10 +341,9 @@ export default {
             }
         });
 
-        watch(() => props.messages.map(m => m.likes), () => {
-            console.log("🔄 likes が更新されたので、マークを再設定します。");
-            initSelectedMark();
-        }, { deep: true });
+        watch(selectedMark, (newVal, oldVal) => {
+            console.log("selectedMarkが更新された:", oldVal, "→", newVal);
+        });
 
 
         return {
@@ -374,7 +373,10 @@ export default {
 }
 
 ul {
+    max-height: 350px; /* 必要に応じて調整 */
+    overflow-y: auto;
     list-style: none;
+    flex-direction: column-reverse; /* 最新の投稿を下に */
     margin: 0;
     padding: 0;
 }
