@@ -32,19 +32,21 @@
 
 # 使用イメージ
 ## Top画面
-### 新規登録機能
-新規ユーザ登録ができます。
-![image](https://github.com/user-attachments/assets/d54be70e-1abd-4b02-aac8-12cf2a44e8fe)
-
 ### ログイン機能
-登録済ユーザなら、「メールアドレス」と「パスワード」の入力でログインできます。
-![image](https://github.com/user-attachments/assets/558a45a4-337b-4b85-8d2d-c9e59fcacb0d)
+登録済ユーザなら、「メールアドレス」と「パスワード」の入力でログインできます。  
+※　「ゲストログイン」からアプリを使うことができます。  
+![image](https://github.com/user-attachments/assets/a06976a5-ac68-45d9-b87a-1598e5a3a567)
+
+### 新規登録機能
+ログインボタン下の「こちら」を選択する新規ユーザ登録画面に切り替わります。  
+![image](https://github.com/user-attachments/assets/4206b333-0fd0-429c-8b12-16fdf4be1634)
+
 
 ## ヘッダー
 基本的に「ホーム」「マイページ」「ログアウト」ボタンを押すと対応するページへ移動します。  
 新規ユーザ登録すると、登録した時の名前が表示されます。  
 （※　マイページで、アバター画像とニックネームを入れて登録ができます。）  
-![image](https://github.com/user-attachments/assets/f877f870-6527-4ec7-83d0-4b9a5a7491a4)
+![image](https://github.com/user-attachments/assets/524c0c65-a056-4f80-8826-0d55772a5a9a)
 
 管理者権限を持つユーザがログインすると「管理者画面」ボタンが表示されます。  
 ![image](https://github.com/user-attachments/assets/d0039524-ee02-4732-9af5-76ec152e2783)
