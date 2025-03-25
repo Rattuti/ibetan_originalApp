@@ -49,13 +49,13 @@
 ![image](https://github.com/user-attachments/assets/524c0c65-a056-4f80-8826-0d55772a5a9a)
 
 管理者権限を持つユーザがログインすると「管理者画面」ボタンが表示されます。  
-![image](https://github.com/user-attachments/assets/b680ac03-47e9-44f7-a0b6-e8545b6a6f34)
+![image](https://github.com/user-attachments/assets/3a641487-ff0c-4446-bd14-a37988f0e243)
 
 ## ホーム画面
 ### 講座情報とタグチェック
 開催予定の講座情報のタイトルが一覧で表示されます。  
 気になる講座のタグをチェックすると赤色が付き、マイページでも確認ができます。  
-![image](https://github.com/user-attachments/assets/50ff6ccc-0be2-48eb-b198-86d2af3904ab)
+![image](https://github.com/user-attachments/assets/219f7dff-b08f-4e92-90dc-6b50da8ae94c)
 
 ### ライブメッセージ + いいね機能
 メッセージを入力し投稿すると、アバター画像と登録名を含むメッセージがリアルタイムで表示されます。  
