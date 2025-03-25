@@ -95,9 +95,8 @@ Actions列では登録ユーザの編集操作ができます。
 「Edit」を押すと、登録ユーザの編集モードに切り替わり、名前と役割の変更が可能です。  
 ※「Delete」を押すと、対象のユーザと紐づく履歴がすべて削除されます。    
 ユーザからのお問い合わせは、Contact列で確認ができます。  
-![image](https://github.com/user-attachments/assets/9da3847c-ea4a-46cd-aac1-234a14b46db3)
+![image](https://github.com/user-attachments/assets/0e13a3f1-c442-4ef5-ba6f-91c50c90e5b1)
 
-![image](https://github.com/user-attachments/assets/2ecd8440-f612-48b5-b51b-779c9c0e7b76)
 
 ## ポリシーページ
 アプリ利用上の注意点や規約を記述しています。  
