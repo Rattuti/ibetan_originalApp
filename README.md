@@ -49,7 +49,7 @@
 ![image](https://github.com/user-attachments/assets/524c0c65-a056-4f80-8826-0d55772a5a9a)
 
 管理者権限を持つユーザがログインすると「管理者画面」ボタンが表示されます。  
-![image](https://github.com/user-attachments/assets/d0039524-ee02-4732-9af5-76ec152e2783)
+![image](https://github.com/user-attachments/assets/b680ac03-47e9-44f7-a0b6-e8545b6a6f34)
 
 ## ホーム画面
 ### 講座情報とタグチェック
