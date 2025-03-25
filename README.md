@@ -82,7 +82,7 @@
 ## マイページ 
 マイページでは、ニックネームやアバター画像の登録ができます。  
 ホーム画面と同様の講座タイトルとチェックしたタグが表示されます。  
-![image](https://github.com/user-attachments/assets/3ee89e81-2090-46f1-9380-34fbd4ff6a71)
+![image](https://github.com/user-attachments/assets/4e808995-1090-47f4-af86-fed043b8cc37)
 
 ## お問い合わせ機能
 お問い合わせフォームから管理者へメッセージを送ることができます。  
