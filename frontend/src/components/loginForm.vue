@@ -16,7 +16,7 @@
             />
             <div class="login-container">
                 <button type="submit" class="btn login-btn">ログイン</button>
-                <button @click="handleGuestLogin" class="btn guest-btn">ゲストログイン</button>
+                <button @click.prevent="handleGuestLogin" class="btn guest-btn">ゲストログイン</button>
             </div>
             <p class="change-form">
                 初めての方は
@@ -87,9 +87,11 @@ const shouldShowLoginForm = ref(true)
 // ゲストログイン時に遷移
 const handleGuestLogin = async () => {
     try {
+
         await authStore.guestLogin();
         await authStore.fetchUser(); // ユーザー情報を再取得
         console.log("ログイン後のユーザー:", authStore.user);
+
         router.push('/chatRoom'); // ログイン成功後にページ遷移
     } catch (error) {
         console.error('ゲストログインに失敗:', error);

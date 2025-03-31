@@ -59,7 +59,7 @@ import navHeaderBar from '../components/navHeaderBar';
 import contact from '../components/contact';
 import navFooterBar from '../components/navFooterBar';
 
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, nextTick } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import { useRoute, useRouter } from "vue-router";
 import axios from "axios";
@@ -115,6 +115,11 @@ const deleteEvent = async () => {
         await axios.delete(`http://localhost:3000/api/events/${eventId}`,{headers});
         alert("削除しました");
         router.push("/ChatRoom");
+        nextTick(() => {
+        setTimeout(() => {
+            window.scrollTo(0, document.body.scrollHeight -700);
+        }, ); // ページ遷移の待機時間
+    });
     } catch (error) {
         console.error("削除エラー:", error);
         alert("削除に失敗しました");
@@ -141,6 +146,11 @@ const updateEvent = async () => {
 
         alert("更新されました");
         router.push("/ChatRoom");
+        nextTick(() => {
+        setTimeout(() => {
+            window.scrollTo(0, document.body.scrollHeight -700);
+        },); // ページ遷移の待機時間
+    });
     } catch (error) {
         console.error("更新エラー:", error);
         alert("更新に失敗しました");
@@ -150,6 +160,11 @@ const updateEvent = async () => {
 // 戻るボタン
 const goBack = () => {
     router.push("/ChatRoom");
+    nextTick(() => {
+        setTimeout(() => {
+            window.scrollTo(0, document.body.scrollHeight -700);
+        },); // ページ遷移の待機時間
+    });
 };
 
 onMounted(fetchEventDetail);

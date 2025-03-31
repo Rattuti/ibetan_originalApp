@@ -216,6 +216,8 @@ onMounted(fetchEvents);
     margin-top: 5px;
   /* カレンダーの上部余白を削減 */
     max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
     border-top: 1px solid #e0e0e0;
     font-size: 0.8em;
     margin-bottom: 0;
@@ -232,9 +234,11 @@ onMounted(fetchEvents);
 
 /* 各曜日を表示する部分 */
 .calendar-weekly {
-    display: flex;
     border-left: 1px solid #e0e0e0;
     position: relative;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    width: 100%; /* 親要素の幅いっぱいにする */
 }
 
 /* 曜日名 */
@@ -255,6 +259,7 @@ onMounted(fetchEvents);
     position: relative;
     overflow: hidden;
     height: 100px;
+    min-width: 0; /* これがないと、要素がはみ出る可能性がある */
 }
 .calendar-youbi.sunday {
     color: red;

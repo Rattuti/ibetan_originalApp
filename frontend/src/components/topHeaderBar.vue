@@ -14,10 +14,12 @@
 <script>
 import { ref, computed } from "vue";
 import { useAuthStore } from "@/stores/auth"; // Piniaのauthストアをインポート
+import { useRouter } from "vue-router";
 import axios from "axios";
 
 export default {
     setup() {
+        const router = useRouter();
         const authStore = useAuthStore(); // 認証ストアを利用
         const error = ref(null);// エラーメッセージの管理
 
@@ -27,7 +29,8 @@ export default {
         // ゲストログイン成功後にトークンをlocalStorageに保存
         const handleGuestLogin = async () => {
             try {
-                const response = await axios.post('/auth/guest_login');
+
+                const response = await axios.post('http://localhost:3000/auth/guest_login');
                 const { auth_token } = response.data;
                 
                 // トークンをlocalStorageに保存
@@ -37,7 +40,9 @@ export default {
                 axios.defaults.headers['Authorization'] = `Bearer ${auth_token}`;
                 
                 console.log('ゲストログイン成功');
-                // 他の処理...
+                
+                router.push("/ChatRoom");
+
             } catch (error) {
                 console.error('ゲストログイン失敗:', error);
             }

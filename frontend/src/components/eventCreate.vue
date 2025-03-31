@@ -35,7 +35,7 @@
 import navHeaderBar from '../components/navHeaderBar';
 import navFooterBar from '../components/navFooterBar';
 
-import { ref } from "vue";
+import { ref, nextTick } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
 import axios from "axios";
@@ -66,13 +66,18 @@ const createEvent = async () => {
                 end_date: newEvent.value.start_date,
                 color: newEvent.value.color,
                 content: newEvent.value.content,
-                judge: true,           
+                judge: false,           
             },
             { headers }
         );
 
         alert('イベントが作成されました');
         router.push("/chatRoom");  // 作成後、ChatRoomページに遷移
+        nextTick(() => {
+        setTimeout(() => {
+            window.scrollTo(0, document.body.scrollHeight -700);
+        }, ); // ページ遷移の待機時間
+    });
     } catch (error) {
         console.error("イベント作成エラー:", error);
         alert("イベント作成に失敗しました");
@@ -82,5 +87,10 @@ const createEvent = async () => {
 // フォームキャンセル
 const cancelCreateEvent = () => {
     router.push("/chatRoom");
+    nextTick(() => {
+        setTimeout(() => {
+            window.scrollTo(0, document.body.scrollHeight -700);
+        }, ); // ページ遷移の待機時間
+    });
 };
 </script>

@@ -59,7 +59,9 @@ export const useAuthStore = defineStore('auth', () => {
     // ゲストログイン関数を追加
     const guestLogin = async () => {
         try {
-            const res = await axios.post('http://localhost:3000/auth/guest_login');
+            const res = await axios.post(`${API_URL}/guest_login`, {},{
+                headers: { "Content-Type": "application/json" }
+            });
             
             console.log("レスポンスヘッダー:", res.headers); // ここを確認
             

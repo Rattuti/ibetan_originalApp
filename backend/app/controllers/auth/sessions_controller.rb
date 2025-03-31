@@ -6,7 +6,7 @@ class Auth::SessionsController < DeviseTokenAuth::SessionsController
     # ゲストログイン処理
     def guest_login
         guest_user = User.find_by(email: 'guest@example.com')
-    
+
         unless guest_user
         guest_user = User.create!(
             name: 'Guest User',

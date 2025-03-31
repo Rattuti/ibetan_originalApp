@@ -1,5 +1,5 @@
 <template>
-    <ul>
+    <ul ref="messagesContainer">
         <li v-for="message in messages" :key="message.id" :class="{
             received: message.email !== uid,
             sent: message.email === uid
@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import { ref, computed, watch, onMounted,toRaw} from "vue";
+import { ref, computed, watch, onMounted, toRaw, nextTick} from "vue";
 import { useAuthStore } from "@/stores/auth";
 import { createConsumer } from "@rails/actioncable";
 
@@ -131,7 +131,7 @@ export default {
 
         // アバター画像の読み込みエラー処理
         const handleImageError = (event) => {
-            console.error('Avatar image failed to load:', event.target.src);
+            //console.error('Avatar image failed to load:', event.target.src);
             event.target.src = "http://localhost:3000/uploads/avatars/default_avatar.jpg"; // デフォルトのアバター画像を設定
         };
 
@@ -235,7 +235,7 @@ export default {
                 console.log("✅ 更新対象の like が見つかった:", updatedLike);
                 updatedLike.mark_type = data.mark_type;
                 updatedLike.click = newClickValue; // ✅ API のレスポンス通りに更新
-                selectedMark.value[message.id] = newClickValue === 1 ? data.mark_type : null;           
+                selectedMark.value[message.id] = newClickValue === 1  ? data.mark_type : null;           
             } else {
                 // 初めての like なら新しく追加
                 console.warn("⚠️ 更新対象の like が見つからない。新規に追加します");
@@ -344,6 +344,17 @@ export default {
         watch(selectedMark, (newVal, oldVal) => {
             console.log("selectedMarkが更新された:", oldVal, "→", newVal);
         });
+
+        const messagesContainer = ref(null);
+
+        watch(() => props.messages.length, () => {
+            nextTick(() => {
+                if (messagesContainer.value) {
+                    messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
+                }
+            });
+        });
+
 
 
         return {
