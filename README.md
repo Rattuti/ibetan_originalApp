@@ -42,6 +42,13 @@
 ![image](https://github.com/user-attachments/assets/4206b333-0fd0-429c-8b12-16fdf4be1634)
 
 
+
+
+https://github.com/user-attachments/assets/1a29d3c4-2d90-48d6-b7ab-4f27400a48eb
+
+
+
+
 ## ヘッダー
 基本的に「ホーム」「マイページ」「ログアウト」ボタンを押すと対応するページへ移動します。  
 新規ユーザ登録すると、登録した時の名前が表示されます。  
