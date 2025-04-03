@@ -2,7 +2,7 @@
     <div class="container welcome">
         <topHeaderBar />
         <div class="image-section">
-            <img src="@/assets/background.jpg" alt="背景画像" class="full-image">
+            <img>
             <div class="content-background">
                 <div class="content-wrapper">
                     <!-- ロゴとテキスト -->
@@ -22,7 +22,7 @@
                 </div>
             </div>
         </div>
-
+    
         <!-- 機能リスト -->
         <div class="features-section">
             <h2 class="features-title">このアプリで出来る3つのこと</h2>
@@ -47,13 +47,12 @@
                     <h3 class="feature-title">カレンダー機能</h3>
                     <img src="@/assets/CalendarEvent.jpg" alt="タグ機能の画像" class="feature-image">
                     <p class="feature-description">
-                        イベントの開催日は自動で表示されるよ。予定は個別に追加できるので使ってみてね。</p>
+                        イベントの開催日は自動で表示されるよ。予定は個別に追加できるので使ってみて。</p>
                 </div>
             </div>
         </div>
-        <topFooterBar />
+    <topFooterBar />
     </div>
-
 </template>
 
 <script>
@@ -63,49 +62,24 @@ import topFooterBar from '../components/topFooterBar.vue';
 
 export default {
     components: {
-        topHeaderBar,
-        loginForm,
-        topFooterBar
-    },
-    data(){
-        return{
-        shouldShowLoginForm: true
-        }
+    topHeaderBar,
+    loginForm,
+    topFooterBar,
     },
     methods: {
-        redirectToChatRoom () {
-            this.$router.push({ name: 'ChatRoom' })
-        }
-    }  
-}
+    redirectToChatRoom() {
+        this.$router.push({ name: 'ChatRoom' });
+    }
+    }
+};
 </script>
 
-<style>
-/* 全体のコンテナ設定 */
-.container {
-    display: flex;
-    flex-direction: column;
-    min-height: 130vh;
-}
-
-/* Welcome セクション */
-.welcome {
-    text-align: center;
-    background-size: cover;
-    background-position: top center;
-    background-repeat: no-repeat;
-    height: 50vh; /* 画面の半分の高さを確保 */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    position: relative; /* 子要素に絶対配置するため */
-}
-
+<style scoped>
 /* 画像とコンテンツの配置 */
 .image-section {
     position: relative;
-    width: 100%;
-    height: 55vh;
+    max-width: 100%;
+    height: 45vh;
     display: flex;
     align-items: center;
     justify-content: flex-start; /* 左側に寄せる */
@@ -113,6 +87,12 @@ export default {
     background-size: cover;
     background-position: center;
 }
+
+.image-section img {
+    height: auto;
+    object-fit: contain;
+}
+
 .content-background{
     position: absolute;
     top: 42%; /* 画像の上半分に重ねる */
@@ -137,7 +117,7 @@ export default {
 .logo-section {
     width: 35%;
     text-align: left;
-    padding:10px;
+    padding: 10px 0px 0px 15px;
 }
 
 .logo-image {
@@ -170,7 +150,7 @@ export default {
 /* ログインフォーム */
 .form-section {
     width: 30%;
-    margin-right: 20px;
+    margin: 20px 10px 10px 10px;
     min-width: 250px;
     width:auto;
 }
@@ -206,7 +186,7 @@ export default {
 /* 機能リストセクション */
 .features-section {
     height: absolute; /* 画面の半分を確保 */
-    min-height: 62vh; /* 必要に応じて最低限の高さを確保 */
+    min-height: 46vh; /* 必要に応じて最低限の高さを確保 */
     background-color: #f8f8f8;
     padding: 0px 0px;
     text-align: center;
@@ -226,7 +206,7 @@ export default {
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
-    max-width: 900px;
+    max-width: 950px;
     margin: 3px auto;
 }
 
@@ -268,7 +248,7 @@ export default {
 .feature-description {
     font-size: 14px;
     color: #39cccc;
-    padding: 5px;
+    padding: 11px 0px 0px 10px;
 }
 
 </style>

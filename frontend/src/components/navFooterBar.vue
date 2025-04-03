@@ -45,7 +45,8 @@ footer {
 }
 
 .footer-logo .logo {
-    max-height: 80px; /* ロゴの縦幅を指定 */
+    max-height: 70px; /* ロゴの縦幅を指定 */
+    padding:10px;
     width: auto;
 }
 

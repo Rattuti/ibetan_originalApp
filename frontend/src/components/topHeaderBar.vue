@@ -109,6 +109,7 @@ button {
     min-width: 150px;
     background-color: #FF0000;
     color: white;
+    padding: 5px 5px 5px 5px;
 }
 .guest-btn:hover {
     background-color: #CC0000; /* 少し暗めの赤 */

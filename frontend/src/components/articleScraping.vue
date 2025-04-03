@@ -169,7 +169,6 @@ export default {
 
 <style scoped>
 .article-window {
-    padding: 2px;
     background-color: #f9f9f9;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -193,6 +192,7 @@ export default {
 
 .column-header {
     padding: 10px 10px;
+    white-space: nowrap; /* 折り返しを防ぐ */
     width: auto; /* 幅を調整 */
 }
 

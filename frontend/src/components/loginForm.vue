@@ -20,7 +20,7 @@
             </div>
             <p class="change-form">
                 初めての方は
-                <span @click="toggleForm">
+                <span @click="toggleForm" class="toggle-form">
                     こちら
                 </span>をクリック<br>ご登録ページへお進みください
             </p>
@@ -56,7 +56,7 @@
 
             <p class="change-form">
                 アカウント登録済の方は
-                <span @click="toggleForm">
+                <span @click="toggleForm" class="toggle-form">
                     こちら
                 </span>からログインしてください
             </p>
@@ -145,6 +145,7 @@ h2{
 }
 .change-form{
     color:#39cccc;
+    padding: 5px 0px 0px 10px;
 }
 .btn {
     background-color: #39cccc; /* デフォルトの青色 */
@@ -172,7 +173,8 @@ h2{
 .login-container {
     display: flex;
     justify-content: center; /* ボタンを中央に配置 */
-    gap: 3px; /* ボタンの間隔 */
+    gap: 12px; /* ボタンの間隔 */
+    padding:5px 10px 5px 10px;
 }
 
 /* ゲストログインボタン (赤) */
@@ -184,5 +186,23 @@ h2{
 .guest-btn:hover {
     background-color: #CC0000; /* 少し暗めの赤 */
 }
+input {
+    width: 100%;
+    padding: 5px;
+    margin: 3px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
 
+.toggle-form{
+    font-weight: bold;
+    text-decoration: underline;
+    color: #39cccc;
+    cursor: pointer;
+}
+
+.toggle-form:hover {
+    color: #2aa5a5; /* ホバー時に少し濃い色に */
+}
 </style>
